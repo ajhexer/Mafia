@@ -1,11 +1,18 @@
 package Server;
 
 
+import Characters.Player;
+import datamodel.GameRoles;
+import datamodel.Message;
+import datamodel.MessageType;
+
 import java.io.BufferedInputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ClientThread implements Runnable , Serializable {
     private Server baseServer;
@@ -28,21 +35,34 @@ public class ClientThread implements Runnable , Serializable {
 
     @Override
     public void run() {
-        while (true){
-            try{
-//                processMessage((GameMessage) incomingMessage.readObject());
-
-            }catch (Exception e){
-//                System.out.println( name + " "+clientSocket.getInetAddress() + " Disconnected");
-//                try{
-//                    clientSocket.close();
-//                }catch (Exception e1){
+//        while (true){
+//            try{
+////                processMessage((GameMessage) incomingMessage.readObject());
 //
-//                }
-//                baseServer.disconnectClient(this);
-//                break;
-                e.printStackTrace();
-            }
+//            }catch (Exception e){
+////                System.out.println( name + " "+clientSocket.getInetAddress() + " Disconnected");
+////                try{
+////                    clientSocket.close();
+////                }catch (Exception e1){
+////
+////                }
+////                baseServer.disconnectClient(this);
+////                break;
+//                e.printStackTrace();
+//            }
+//        }
+        try {
+            List<Player> playerList = new ArrayList<>();
+            playerList.add(new Player("alireza", GameRoles.DIEHARD));
+            playerList.add(new Player("Sina", GameRoles.PRO));
+
+            outcomingMessage.writeObject(new Message(MessageType.VOTE, playerList));
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        while (true){
+
         }
     }
 

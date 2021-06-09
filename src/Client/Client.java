@@ -1,5 +1,7 @@
 package Client;
 
+import Characters.Player;
+import datamodel.Message;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ObservableBooleanValue;
 import javafx.collections.FXCollections;
@@ -8,6 +10,7 @@ import javafx.collections.ObservableList;
 import java.io.*;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.List;
 
 public class Client implements Runnable, Serializable{
 
@@ -46,6 +49,18 @@ public class Client implements Runnable, Serializable{
 //                e.printStackTrace();
 //            }
 //        }
+        try{
+            Message message = (Message) serverToClientReader.readObject();
+            List<Player> playerList = (List<Player>) message.getContent();
+            playerList.forEach(player -> {
+                System.out.println(player.getName());
+            });
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        while (true){
+
+        }
     }
 
 //    private void processMessage(GameMessage message){

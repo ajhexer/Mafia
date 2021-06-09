@@ -19,4 +19,7 @@ public class Player implements Serializable {
         this.role = role;
     }
 
+    public String getName() {
+        return name;
+    }
 }
