@@ -86,5 +86,10 @@ public class Game {
             playerToClient.put(temp, clients.get(i));
         }
     }
+    private void startVote(){
+        playerToClient.forEach((player, clientThread) -> {
+            clientThread.sendMessage(new Message(MessageType.STARTVOTE, new Object()));
+        });
+    }
 
 }

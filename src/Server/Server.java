@@ -1,6 +1,7 @@
 package Server;
 
 
+import datamodel.Message;
 import javafx.collections.ObservableList;
 
 import java.io.IOException;
@@ -46,11 +47,11 @@ public class Server implements Runnable, Serializable {
 
 
     }
-//    public synchronized void writeChatMessageToAll(GameMessage message){
-//        for(ClientThread client: clientThreads){
-//            client.sendMessage(message);
-//        }
-//    }
+    public synchronized void writeChatMessageToAll(Message message){
+        for(ClientThread client: clientThreads){
+            client.sendMessage(message);
+        }
+    }
     public synchronized void disconnectClient(ClientThread client){
         try {
             clientThreads.remove(client);

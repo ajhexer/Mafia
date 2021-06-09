@@ -35,70 +35,48 @@ public class ClientThread implements Runnable , Serializable {
 
     @Override
     public void run() {
-//        while (true){
-//            try{
-////                processMessage((GameMessage) incomingMessage.readObject());
-//
-//            }catch (Exception e){
-////                System.out.println( name + " "+clientSocket.getInetAddress() + " Disconnected");
-////                try{
-////                    clientSocket.close();
-////                }catch (Exception e1){
-////
-////                }
-////                baseServer.disconnectClient(this);
-////                break;
-//                e.printStackTrace();
-//            }
-//        }
-        try {
-            List<Player> playerList = new ArrayList<>();
-            playerList.add(new Player("alireza", GameRoles.DIEHARD));
-            playerList.add(new Player("Sina", GameRoles.PRO));
-
-            outcomingMessage.writeObject(new Message(MessageType.VOTE, playerList));
-
-        }catch (Exception e){
-            e.printStackTrace();
-        }
         while (true){
+            try{
+                processMessage((Message) incomingMessage.readObject());
 
+            }catch (Exception e){
+//                System.out.println( name + " "+clientSocket.getInetAddress() + " Disconnected");
+//                try{
+//                    clientSocket.close();
+//                }catch (Exception e1){
+//
+//                }
+//                baseServer.disconnectClient(this);
+//                break;
+                e.printStackTrace();
+            }
+        }
+
+    }
+
+    private void processMessage(Message message){
+
+        if(message.getTitle() == MessageType.REGISTER){
+//            this.name = message.getContent().toString();
+        }else if(message.getTitle() == MessageType.CHAT){
+            baseServer.writeChatMessageToAll(message);
+        }
+    }
+//
+    public void sendMessage(Message message){
+        try {
+            outcomingMessage.writeObject(message);
+        }catch (Exception e){
+//            try{
+//                clientSocket.close();
+//            }catch (Exception exception){
+//
+//            }
+//            baseServer.disconnectClient(this);
+            e.printStackTrace();
         }
     }
 
-//    private void processMessage(GameMessage message){
-//
-//        if(message.getTitle() == MessageType.REGISTER){
-////            this.name = message.getContent().toString();
-//        }else if(message.getTitle() == MessageType.CHAT){
-//            baseServer.writeChatMessageToAll(message);
-//        }else if(message.getTitle() == MessageType.VOTE){
-//            basePlayer.setVoted(true);
-//            for(ClientThread thread : baseServer.getClientThreads()){
-////                if (thread.equals((ClientThread) message.getContent())){
-////                    thread.getBasePlayer().addVotedTo();
-////                }
-//            }
-//        }
-//    }
-//
-//    public void sendMessage(GameMessage message){
-//        try {
-//            outcomingMessage.writeObject(message);
-//        }catch (Exception e){
-////            try{
-////                clientSocket.close();
-////            }catch (Exception exception){
-////
-////            }
-////            baseServer.disconnectClient(this);
-//            e.printStackTrace();
-//        }
-//    }
-//
-//    public String getName() {
-//        return name;
-//    }
 //
 //    public void setBasePlayer(Player basePlayer) {
 //        this.basePlayer = basePlayer;

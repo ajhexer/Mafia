@@ -2,6 +2,7 @@ package Client;
 
 import Characters.Player;
 import datamodel.Message;
+import datamodel.MessageType;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ObservableBooleanValue;
 import javafx.collections.FXCollections;
@@ -21,6 +22,7 @@ public class Client implements Runnable, Serializable{
     private String name;
     private SimpleBooleanProperty buttonDisable = new SimpleBooleanProperty(false);
     private SimpleBooleanProperty quitDisable = new SimpleBooleanProperty(false);
+    private SimpleBooleanProperty chatAccess = new SimpleBooleanProperty(true);
 //    private MessageType selectType = null;
 //    private ObservableList<Player> currentVoteItems = FXCollections.observableArrayList();
     ObservableList<String> chatLog = FXCollections.observableArrayList();
@@ -49,27 +51,27 @@ public class Client implements Runnable, Serializable{
 //                e.printStackTrace();
 //            }
 //        }
-        try{
-            Message message = (Message) serverToClientReader.readObject();
-            List<Player> playerList = (List<Player>) message.getContent();
-            playerList.forEach(player -> {
-                System.out.println(player.getName());
-            });
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-        while (true){
+        while(true){
+            try{
+                processMessage((Message) serverToClientReader.readObject());
+            }catch (Exception e){
+                e.printStackTrace();
+            }
 
         }
+
     }
 
-//    private void processMessage(GameMessage message){
-//        if(message.getTitle() == MessageType.CHAT){
-////            chatLog.add((String)message.getContent());
+    private void processMessage(Message message){
+        if(message.getTitle() == MessageType.CHAT) {
+            chatLog.add((String) message.getContent());
+        }else if(message.getTitle() == MessageType.STARTVOTE){
+            chatAccess.set(false);
+        }
 //        }else if(message.getTitle().equals(MessageType.VOTE)){
 //            selectType = MessageType.VOTE;
 //            buttonDisable.set(true);
-////            currentVoteItems.setAll((List<Player>)message.getContent());
+//            currentVoteItems.setAll((List<Player>)message.getContent());
 //        }else if(message.getTitle().equals(MessageType.SPECIAL)){
 //            selectType = MessageType.SPECIAL;
 //            SpecialMessage temp = (SpecialMessage) message;
@@ -84,17 +86,17 @@ public class Client implements Runnable, Serializable{
 //            clientRole = (GameRoles) ((SpecialMessage) message).getRole();
 //            buttonDisable.set(true);
 //        }
-//
-//    }
-//    public void sendChatMessage(String s){
-//
-//        try{
-//            clientToServerWriter.writeObject(new GameMessage(MessageType.CHAT, name+": "+s));
-//        }catch (Exception e){
-//            e.printStackTrace();
-//        }
-//
-//    }
+
+    }
+    public void sendChatMessage(String s){
+
+        try{
+            clientToServerWriter.writeObject(new Message(MessageType.CHAT, name+": "+s));
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+    }
 //    public void sendVoteMessage(GameMessage message){
 //        try{
 //            clientToServerWriter.writeObject(message);
@@ -126,4 +128,7 @@ public class Client implements Runnable, Serializable{
 //    }
 
 
+    public SimpleBooleanProperty chatAccessProperty() {
+        return chatAccess;
+    }
 }

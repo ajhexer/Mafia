@@ -8,6 +8,8 @@ public enum MessageType implements Serializable {
     VOTE,
     SPECIAL,
     MAFIATARGET,
+    STARTVOTE,
+
 
 
 }

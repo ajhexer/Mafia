@@ -34,15 +34,16 @@ public class MainController {
         clientThread.start();
         chatListView.setItems(client.getChatLog());
         chatTextField.setWrapText(true);
-//        chatTextField.setOnKeyPressed(new EventHandler<KeyEvent>() {
-//            @Override
-//            public void handle(KeyEvent keyEvent) {
-//                if(keyEvent.getCode()== KeyCode.ENTER){
-//                    client.sendChatMessage(chatTextField.getText());
-//                    chatTextField.clear();
-//                }
-//            }
-//        });
+        chatTextField.disableProperty().bind(client.chatAccessProperty());
+        chatTextField.setOnKeyPressed(new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent keyEvent) {
+                if(keyEvent.getCode()== KeyCode.ENTER){
+                    client.sendChatMessage(chatTextField.getText());
+                    chatTextField.clear();
+                }
+            }
+        });
         chatListView.setCellFactory(new Callback<ListView<String>, ListCell<String>>() {
             @Override
             public ListCell<String> call(ListView<String> stringListView) {
@@ -74,41 +75,41 @@ public class MainController {
                 return cell;
             }
         });
-        nameBox.setCellFactory(new Callback<ListView<ClientThread>, ListCell<ClientThread>>() {
-            @Override
-            public ListCell<ClientThread> call(ListView<ClientThread> clientThreadListView) {
-                return new ListCell<ClientThread>(){
-                    @Override
-                    protected void updateItem(ClientThread clientThread, boolean b) {
-                        if(clientThread==null || b){
-                            setGraphic(null);
-                        }else{
+//        nameBox.setCellFactory(new Callback<ListView<ClientThread>, ListCell<ClientThread>>() {
+//            @Override
+//            public ListCell<ClientThread> call(ListView<ClientThread> clientThreadListView) {
+//                return new ListCell<ClientThread>(){
+//                    @Override
+//                    protected void updateItem(ClientThread clientThread, boolean b) {
+//                        if(clientThread==null || b){
+//                            setGraphic(null);
+//                        }else{
 //                            setText(clientThread.getName());
-                        }
-                    }
-                };
-            }
-        });
-        voteButton.setOnAction(new EventHandler<ActionEvent>() {
-
-            @Override
-            public void handle(ActionEvent event) {
-//                if (client.getSelectType()==MessageType.VOTE){
-//                    client.sendVoteMessage(new GameMessage(MessageType.VOTE, nameBox.getSelectionModel().getSelectedItem()));
-//                }else if(client.getSelectType()==MessageType.SPECIAL){
+//                        }
+//                    }
+//                };
+//            }
+//        });
+//        voteButton.setOnAction(new EventHandler<ActionEvent>() {
 //
-//                }else if(client.getSelectType()==MessageType.MAFIATARGET){
-//
-//                }
-            }
-        });
-        voteButton.visibleProperty().bind(client.isButtonDisable());
-        voteButton.disableProperty().bind(client.isButtonDisable());
-        nameBox.visibleProperty().bind(client.isButtonDisable());
-        nameBox.disableProperty().bind(client.isButtonDisable());
-        modeLabel.disableProperty().bind(client.isButtonDisable());
-        quitButton.disableProperty().bind(client.isQuitDisable());
-        quitButton.visibleProperty().bind(client.isQuitDisable());
+//            @Override
+//            public void handle(ActionEvent event) {
+////                if (client.getSelectType()==MessageType.VOTE){
+////                    client.sendVoteMessage(new GameMessage(MessageType.VOTE, nameBox.getSelectionModel().getSelectedItem()));
+////                }else if(client.getSelectType()==MessageType.SPECIAL){
+////
+////                }else if(client.getSelectType()==MessageType.MAFIATARGET){
+////
+////                }
+//            }
+//        });
+//        voteButton.visibleProperty().bind(client.isButtonDisable());
+//        voteButton.disableProperty().bind(client.isButtonDisable());
+//        nameBox.visibleProperty().bind(client.isButtonDisable());
+//        nameBox.disableProperty().bind(client.isButtonDisable());
+//        modeLabel.disableProperty().bind(client.isButtonDisable());
+//        quitButton.disableProperty().bind(client.isQuitDisable());
+//        quitButton.visibleProperty().bind(client.isQuitDisable());
 //        quitButton.setOnAction(new EventHandler<ActionEvent>() {
 //            @Override
 //            public void handle(ActionEvent event) {
