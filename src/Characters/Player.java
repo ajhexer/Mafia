@@ -14,6 +14,8 @@ public class Player implements Serializable {
     protected int timeSaveByDoctor = 0;
     protected int life;
     protected boolean shoot = false;
+    protected Player heVotedTo = null;
+    protected boolean isVoted = false;
 
     public Player(String name, GameRoles role){
         this.name = name;
@@ -23,4 +25,37 @@ public class Player implements Serializable {
     public String getName() {
         return name;
     }
+
+    public int getTimeToUseAbility() {
+        return timeToUseAbility;
+    }
+
+    public void setTimeToUseAbility(int timeToUseAbility) {
+        this.timeToUseAbility = timeToUseAbility;
+    }
+
+    public boolean isVoted() {
+        return isVoted;
+    }
+
+    public void setVoted(boolean voted) {
+        isVoted = voted;
+    }
+
+    public void setHeVotedTo(Player heVotedTo) {
+        this.heVotedTo = heVotedTo;
+    }
+
+    public int getVotedTo() {
+        return votedTo;
+    }
+
+    public void setVotedTo(int votedTo) {
+        this.votedTo = votedTo;
+    }
+
+    public Player getHeVotedTo() {
+        return heVotedTo;
+    }
+
 }

@@ -11,4 +11,5 @@ public class Mayor extends Player{
         this.timeToUseAbility = 1;
         this.life = 1;
     }
+
 }

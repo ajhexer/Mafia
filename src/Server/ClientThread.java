@@ -2,6 +2,7 @@ package Server;
 
 
 import Characters.Player;
+import datamodel.Game;
 import datamodel.GameRoles;
 import datamodel.Message;
 import datamodel.MessageType;
@@ -20,7 +21,7 @@ public class ClientThread implements Runnable , Serializable {
     private ObjectInputStream incomingMessage;
     private ObjectOutputStream outcomingMessage;
     private String name;
-
+    private Game baseGame;
 
 
 
@@ -60,6 +61,8 @@ public class ClientThread implements Runnable , Serializable {
 //            this.name = message.getContent().toString();
         }else if(message.getTitle() == MessageType.CHAT){
             baseServer.writeChatMessageToAll(message);
+        }else if(message.getTitle() == MessageType.VOTE){
+            baseGame.processGameMessages(message, this);
         }
     }
 //
@@ -97,5 +100,9 @@ public class ClientThread implements Runnable , Serializable {
 
     public String getName() {
         return name;
+    }
+
+    public void setBaseGame(Game baseGame) {
+        this.baseGame = baseGame;
     }
 }
