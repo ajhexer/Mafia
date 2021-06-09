@@ -116,4 +116,8 @@ public class ClientThread implements Runnable , Serializable {
 //        ClientThread client = (ClientThread) obj;
 //        return this.name.equals(client.name) && this.clientSocket.equals(client.clientSocket);
 //    }
+
+    public String getName() {
+        return name;
+    }
 }
