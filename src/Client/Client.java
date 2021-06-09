@@ -67,6 +67,10 @@ public class Client implements Runnable, Serializable{
             chatLog.add((String) message.getContent());
         }else if(message.getTitle() == MessageType.STARTVOTE){
             chatAccess.set(false);
+        }else if(message.getTitle() == MessageType.ENDNIGHT){
+            buttonDisable.set(false);
+            quitDisable.set(false);
+            chatAccess.set(true);
         }
 //        }else if(message.getTitle().equals(MessageType.VOTE)){
 //            selectType = MessageType.VOTE;

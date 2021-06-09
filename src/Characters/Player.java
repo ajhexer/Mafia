@@ -13,6 +13,7 @@ public class Player implements Serializable {
     protected boolean savedByDoctor = false;
     protected int timeSaveByDoctor = 0;
     protected int life;
+    protected boolean shoot = false;
 
     public Player(String name, GameRoles role){
         this.name = name;

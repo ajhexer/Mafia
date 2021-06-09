@@ -91,5 +91,37 @@ public class Game {
             clientThread.sendMessage(new Message(MessageType.STARTVOTE, new Object()));
         });
     }
+    private void createVote(){
+        //TODO create voting functionality
+        System.out.println("Creating vote");
+        playerToClient.forEach(((player, clientThread) -> {
+            clientThread.sendMessage(new Message(MessageType.VOTE, players));
+        }));
+        try {
+            Thread.sleep(30000);
+        }catch (InterruptedException e){
+            e.printStackTrace();
+        }
+        System.out.println("Asking mayor");
+//        for(Player player : players){
+//            if(player.getRole().equals(GameRoles.MAYOR) && player.getTimeToUseAbility()>0){
+//                player.askForAbility(players);
+//                player.setTimeToUseAbility(player.getTimeToUseAbility()-1);
+//                break;
+//            }
+//        }
+        playerToClient.forEach(((player, clientThread) -> {
 
+        }));
+        try {
+            Thread.sleep(12000);
+        }catch (InterruptedException e){
+            e.printStackTrace();
+        }
+    }
+    private void endNight(){
+        playerToClient.forEach(((player, clientThread) -> {
+            clientThread.sendMessage(new Message(MessageType.ENDNIGHT, new Object()));
+        }));
+   }
 }
