@@ -12,4 +12,19 @@ public class Mayor extends Player{
         this.life = 1;
     }
 
+    public boolean isCancelPoll() {
+        return cancelPoll;
+    }
+
+    public Player getToBeQuited() {
+        return toBeQuited;
+    }
+
+    public void setCancelPoll(boolean cancelPoll) {
+        this.cancelPoll = cancelPoll;
+    }
+
+    public void setToBeQuited(Player toBeQuited) {
+        this.toBeQuited = toBeQuited;
+    }
 }

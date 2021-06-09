@@ -6,10 +6,7 @@ import Server.ClientThread;
 
 import javax.print.Doc;
 import javax.swing.text.html.HTMLDocument;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 public class Game implements Runnable{
     private static volatile Game instance = null;
@@ -140,7 +137,6 @@ public class Game implements Runnable{
             if(player instanceof Mayor){
                 if(player.getTimeToUseAbility()>0){
                     clientThread.sendMessage(new SpecialMessage(MessageType.SPECIAL, players, GameRoles.MAYOR));
-                    player.setTimeToUseAbility(0);
                     try {
                         Thread.sleep(12000);
                     }catch (InterruptedException e){
@@ -151,32 +147,74 @@ public class Game implements Runnable{
         }));
 
     }
+    private void endVote(){
+        playerToClient.forEach(((player, clientThread) -> {
+            clientThread.sendMessage(new Message(MessageType.ENDVOTE, new Object()));
+        }));
+    }
+    private void processVote(){
+        Mayor mayor = null;
+        for(Player player: players){
+            if(player instanceof Mayor){
+                mayor = (Mayor) player;
+                break;
+            }
+        }
+        if(mayor!=null && (mayor.getToBeQuited()!=null || mayor.isCancelPoll()!=false)){
+            if(mayor.getToBeQuited()!=null){
+                deletePlayer(mayor.getToBeQuited());
+                mayor.setTimeToUseAbility(0);
+            }else if(mayor.isCancelPoll()){
+                mayor.setTimeToUseAbility(0);
+                return;
+            }
+        }else{
+            players.sort(new Comparator<Player>() {
+                @Override
+                public int compare(Player o1, Player o2) {
+                    return Integer.compare(o2.getVotedTo(), o1.getVotedTo());
+                }
+            });
+            deletePlayer(players.get(0));
+        }
+    }
+    private void startNight(){
+
+    }
     private void endNight(){
         playerToClient.forEach(((player, clientThread) -> {
             clientThread.sendMessage(new Message(MessageType.ENDNIGHT, new Object()));
         }));
    }
-    private void endVote(){
-
-    }
-    private void startNight(){
-
-    }
-    private boolean checkEndCondition(){
-        return true;
-    }
-    private void processVote(){
-
-    }
     private void processNight(){
 
+
     }
+
+    private boolean checkEndCondition(){
+        int mafiaNum = 0;
+        int civilNum = 0;
+        for(Player player: players){
+            if(player instanceof Mafia){
+                mafiaNum++;
+            }else{
+                civilNum++;
+            }
+        }
+        if(mafiaNum==0 || civilNum<=mafiaNum){
+            return true;
+        }
+        return false;
+    }
+
+
     public void processGameMessages(Message message, ClientThread client){
         if(message.getTitle()==MessageType.VOTE){
-
+            processVoteMessage(message, client);
+        }else if(message.getTitle()==MessageType.SPECIAL){
+            processSpecialMessage(message, client);
         }
     }
-
     private void processVoteMessage(Message message, ClientThread client){
         Player temp = null;
         for(Player player : playerToClient.keySet()){
@@ -198,6 +236,13 @@ public class Game implements Runnable{
             temp.setVoted(true);
             temp.getHeVotedTo().setVotedTo(temp.getHeVotedTo().getVotedTo()+1);
         }
+
+    }
+    private void processSpecialMessage(Message message, ClientThread client){
+    }
+
+
+    private void deletePlayer(Player player){
 
     }
 }
