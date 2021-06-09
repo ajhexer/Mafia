@@ -61,4 +61,9 @@ public class Player implements Serializable {
     public GameRoles getRole() {
         return role;
     }
+
+    public void setSavedByDoctor(boolean savedByDoctor) {
+        this.savedByDoctor = savedByDoctor;
+    }
+
 }

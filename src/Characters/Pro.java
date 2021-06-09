@@ -10,4 +10,8 @@ public class Pro extends Player{
         this.life = 1;
         this.timeToUseAbility = 10000;
     }
+
+    public void setTarget(Player target) {
+        this.target = target;
+    }
 }

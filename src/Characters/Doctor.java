@@ -11,4 +11,20 @@ public class Doctor extends Player{
         this.life = 1;
         this.timeToUseAbility = 1000;
     }
+
+    public boolean isSavedSelf() {
+        return savedSelf;
+    }
+
+    public Player getToBeSaved() {
+        return toBeSaved;
+    }
+
+    public void setSavedSelf(boolean savedSelf) {
+        this.savedSelf = savedSelf;
+    }
+
+    public void setToBeSaved(Player toBeSaved) {
+        this.toBeSaved = toBeSaved;
+    }
 }

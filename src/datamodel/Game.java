@@ -247,6 +247,56 @@ public class Game implements Runnable{
 
     }
     private void processSpecialMessage(Message message, ClientThread client){
+        SpecialMessage temp = (SpecialMessage)message;
+        GameRoles role = temp.getRole();
+        Player tempPlayer = null;
+        for(Player player: players){
+            if(playerToClient.get(player).equals(client)){
+                tempPlayer = player;
+                break;
+            }
+        }
+        if(tempPlayer==null){
+            throw new NullPointerException();
+        }
+
+        if(role.equals(GameRoles.DOCTOR)){
+            Doctor tempDoctor = (Doctor)tempPlayer;
+
+            if(tempDoctor.getTimeToUseAbility()>0){
+                if(((Player)temp.getContent()).equals(tempDoctor)){
+                    if(!tempDoctor.isSavedSelf()){
+                        tempDoctor.setSavedByDoctor(true);
+                    }
+                }else{
+                    ((Player)temp.getContent()).setSavedByDoctor(true);
+                }
+            }
+        }else if(role.equals(GameRoles.PRO)){
+            Pro tempPro = (Pro)tempPlayer;
+            tempPro.setTarget((Player)temp.getContent());
+        }else if(role.equals(GameRoles.MAYOR)){
+            Mayor tempMayor = (Mayor) tempPlayer;
+            if(temp.getContent() instanceof Boolean){
+                tempMayor.setCancelPoll((Boolean)temp.getContent());
+            }else if(temp.getContent() instanceof Player){
+                tempMayor.setToBeQuited((Player) temp.getContent());
+            }
+        }else if(role.equals(GameRoles.DETECTIVE)){
+            Detective tempDetective = (Detective) tempPlayer;
+            if(((Player)temp.getContent()) instanceof Godfather || !(temp.getContent() instanceof Mafia)){
+                client.sendMessage(new Message(MessageType.SECRET, "Civilian"));
+            }else{
+                client.sendMessage(new Message(MessageType.SECRET, "Mafia"));
+            }
+        }else if(role.equals(GameRoles.DIEHARD)){
+            Diehard tempDiehard = (Diehard) tempPlayer;
+            tempDiehard.setPublish(true);
+            tempDiehard.setTimeToUseAbility(tempDiehard.getTimeToUseAbility()-1);
+        }else if(role.equals(GameRoles.PSYCHO)){
+
+        }
+
     }
 
 
