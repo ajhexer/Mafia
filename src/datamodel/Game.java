@@ -102,7 +102,7 @@ public class Game implements Runnable{
             }else if(inGameRoles.get(i).equals(GameRoles.DETECTIVE)){
                 temp = new Detective(clients.get(i).getName(), inGameRoles.get(i));
             }else if(inGameRoles.get(i).equals(GameRoles.CIVILIAN)){
-                temp = new Player(clients.get(i).getName(), inGameRoles.get(i));
+                temp = new Civilian(clients.get(i).getName(), inGameRoles.get(i));
             }else if(inGameRoles.get(i).equals(GameRoles.GODFATHER)){
                 temp = new Godfather(clients.get(i).getName(), inGameRoles.get(i));
             }else if(inGameRoles.get(i).equals(GameRoles.LECTER)){
@@ -179,7 +179,15 @@ public class Game implements Runnable{
         }
     }
     private void startNight(){
-
+        playerToClient.forEach(((player, clientThread) -> {
+            if(player instanceof Mafia){
+                clientThread.sendMessage(new SpecialMessage(MessageType.MAFIATARGET, players, player.getRole()));
+            }else if(!(player instanceof Civilian) && !(player instanceof Mayor)){
+                if(player.getTimeToUseAbility()>0){
+                    clientThread.sendMessage(new SpecialMessage(MessageType.SPECIAL, players, player.getRole()));
+                }
+            }
+        }));
     }
     private void endNight(){
         playerToClient.forEach(((player, clientThread) -> {

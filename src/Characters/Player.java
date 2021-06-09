@@ -58,4 +58,7 @@ public class Player implements Serializable {
         return heVotedTo;
     }
 
+    public GameRoles getRole() {
+        return role;
+    }
 }
