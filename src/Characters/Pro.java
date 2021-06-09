@@ -1,0 +1,13 @@
+package Characters;
+
+import datamodel.GameRoles;
+
+public class Pro extends Player{
+    Player target = null;
+
+    public Pro(String name, GameRoles role) {
+        super(name, role);
+        this.life = 1;
+        this.timeToUseAbility = 10000;
+    }
+}

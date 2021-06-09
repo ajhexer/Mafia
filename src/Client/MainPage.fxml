@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<GridPane prefHeight="500" prefWidth="900" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
+    <VBox spacing="5">
+
+        <HBox>
+            <AnchorPane prefHeight="367.0" prefWidth="589.0">
+
+                <ComboBox fx:id="nameBox" layoutX="124.0" layoutY="105.0" prefWidth="150.0" />
+            <Button fx:id="voteButton" layoutX="173.0" layoutY="168.0" mnemonicParsing="false" text="Select" />
+            <Label fx:id="modeLabel" layoutX="180.0" layoutY="74.0" text="Label" />
+            <Button fx:id="quitButton" layoutX="166.0" layoutY="233.0" mnemonicParsing="false" text="Quit Vote" />
+            </AnchorPane>
+            <VBox spacing="10">
+                <ListView fx:id="chatListView" prefHeight="313.0" prefWidth="616.0">
+
+                </ListView>
+                <TextArea fx:id="chatTextField" prefHeight="32.0" prefWidth="464.0">
+
+                </TextArea>
+            </VBox>
+        </HBox>
+        <TextArea />
+
+    </VBox>
+   <columnConstraints>
+      <ColumnConstraints />
+   </columnConstraints>
+   <rowConstraints>
+      <RowConstraints />
+   </rowConstraints>
+
+</GridPane>
