@@ -30,6 +30,7 @@ public class Client implements Runnable, Serializable{
     private MessageType selectType = null;
     private ObservableList<Player> currentVoteItems = FXCollections.observableArrayList();
     ObservableList<String> chatLog = FXCollections.observableArrayList();
+    SimpleStringProperty secretLog = new SimpleStringProperty("");
     private SimpleStringProperty selectButtonText = new SimpleStringProperty();
     private SimpleStringProperty labelText = new SimpleStringProperty();
     GameRoles clientRole = null;
@@ -111,25 +112,13 @@ public class Client implements Runnable, Serializable{
             }else if(temp.getRole() == GameRoles.PRO){
                 labelText.set("Select if you want shoot a player");
             }
+        }else if(message.getTitle() == MessageType.SECRET){
+            String lastSecret = secretLog.get();
+            lastSecret+=(String) message.getContent()+"\n";
+            secretLog.set(lastSecret);
+        }else if(message.getTitle() == MessageType.ENDVOTE){
+
         }
-//        }else if(message.getTitle().equals(MessageType.VOTE)){
-//            selectType = MessageType.VOTE;
-//            buttonDisable.set(true);
-//            currentVoteItems.setAll((List<Player>)message.getContent());
-//        }else if(message.getTitle().equals(MessageType.SPECIAL)){
-//            selectType = MessageType.SPECIAL;
-//            SpecialMessage temp = (SpecialMessage) message;
-//            clientRole = (GameRoles) temp.getRole();
-//            buttonDisable.set(true);
-//            if(clientRole==GameRoles.MAYOR){
-//                quitDisable.set(true);
-//            }
-//        }else if(message.getTitle().equals(MessageType.MAFIATARGET)){
-//            selectType = MessageType.MAFIATARGET;
-//            SpecialMessage temp = (SpecialMessage) message;
-//            clientRole = (GameRoles) ((SpecialMessage) message).getRole();
-//            buttonDisable.set(true);
-//        }
 
     }
     public void sendChatMessage(String s){
@@ -141,19 +130,7 @@ public class Client implements Runnable, Serializable{
         }
 
     }
-//    public void sendVoteMessage(GameMessage message){
-//        try{
-//            clientToServerWriter.writeObject(message);
-//        }catch (Exception e){
-//            e.printStackTrace();
-//        }
-//    }
-//    public void sendAbilityMessage(SpecialMessage message){
-//
-//    }
-//    public void sendMafiaTarget(SpecialMessage message){
-//
-//    }
+
 
     public ObservableList<String> getChatLog() {
         return chatLog;

@@ -116,6 +116,8 @@ public class MainController {
 //                client.sendAbilityMessage(new SpecialMessage(MessageType.SPECIAL, "Quit", GameRoles.MAYOR));
 //            }
 //        });
+        chatTextField.textProperty().bind(client.secretLog);
+        chatTextField.setEditable(false);
     }
     public void setClient(Client client){
         this.client = client;
