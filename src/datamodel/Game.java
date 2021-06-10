@@ -3,9 +3,6 @@ package datamodel;
 import Characters.*;
 import Server.Server;
 import Server.ClientThread;
-
-import javax.print.Doc;
-import javax.swing.text.html.HTMLDocument;
 import java.util.*;
 
 public class Game implements Runnable{
@@ -50,6 +47,7 @@ public class Game implements Runnable{
         }
 
         //TODO: End of the game and say which team won the game and finish
+
     }
 
     private void createRoles(){
@@ -220,6 +218,7 @@ public class Game implements Runnable{
                 }
             }else if(player instanceof Psycho){
                 Player toBeMuted = ((Psycho)player).getToBeMuted();
+                playerToClient.get(toBeMuted).setMuted(true);
                 if(toBeMuted!=null){
                     baseServer.writeChatMessageToAll(new Message(MessageType.CHAT, "Game: Player " + toBeMuted.getName() + "muted by Psycho"));
                 }
@@ -238,6 +237,7 @@ public class Game implements Runnable{
             if(player.getMutedUntil()!=null){
                 if(date.compareTo(player.getMutedUntil())>=0){
                     player.setMutedUntil(null);
+                    playerToClient.get(player).setMuted(false);
                 }
             }
             player.resetPlayer();

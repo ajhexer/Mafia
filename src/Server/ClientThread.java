@@ -23,7 +23,7 @@ public class ClientThread implements Runnable , Serializable {
     private String name;
     private Game baseGame;
     private boolean isAlive = true;
-
+    private boolean muted = false;
 
     public ClientThread(Socket clientSocket, Server baseServer) throws Exception{
         this.baseServer = baseServer;
@@ -38,8 +38,9 @@ public class ClientThread implements Runnable , Serializable {
     public void run() {
         while (true){
             try{
-                processMessage((Message) incomingMessage.readObject());
-
+                if(isAlive){
+                    processMessage((Message) incomingMessage.readObject());
+                }
             }catch (Exception e){
 //                System.out.println( name + " "+clientSocket.getInetAddress() + " Disconnected");
 //                try{
@@ -59,7 +60,7 @@ public class ClientThread implements Runnable , Serializable {
 
         if(message.getTitle() == MessageType.REGISTER){
 //            this.name = message.getContent().toString();
-        }else if(message.getTitle() == MessageType.CHAT){
+        }else if(message.getTitle() == MessageType.CHAT && !muted){
             baseServer.writeChatMessageToAll(message);
         }else if(message.getTitle() == MessageType.VOTE){
             baseGame.processGameMessages(message, this);
@@ -89,14 +90,14 @@ public class ClientThread implements Runnable , Serializable {
 //        return basePlayer;
 //    }
 //
-//    @Override
-//    public boolean equals(Object obj) {
-//        if(! (obj instanceof ClientThread)){
-//            return false;
-//        }
-//        ClientThread client = (ClientThread) obj;
-//        return this.name.equals(client.name) && this.clientSocket.equals(client.clientSocket);
-//    }
+    @Override
+    public boolean equals(Object obj) {
+        if(! (obj instanceof ClientThread)){
+            return false;
+        }
+        ClientThread client = (ClientThread) obj;
+        return this.name.equals(client.name) && this.clientSocket.equals(client.clientSocket);
+    }
 
     public String getName() {
         return name;
@@ -112,5 +113,9 @@ public class ClientThread implements Runnable , Serializable {
 
     public void setAlive(boolean alive) {
         isAlive = alive;
+    }
+
+    public void setMuted(boolean muted) {
+        this.muted = muted;
     }
 }

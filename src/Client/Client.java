@@ -1,9 +1,12 @@
 package Client;
 
 import Characters.Player;
+import datamodel.GameRoles;
 import datamodel.Message;
 import datamodel.MessageType;
+import datamodel.SpecialMessage;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ObservableBooleanValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -20,13 +23,16 @@ public class Client implements Runnable, Serializable{
     private ObjectOutputStream clientToServerWriter;
     private Socket clientSocket;
     private String name;
-    private SimpleBooleanProperty buttonDisable = new SimpleBooleanProperty(false);
-    private SimpleBooleanProperty quitDisable = new SimpleBooleanProperty(false);
+    private SimpleBooleanProperty selectButtonAccess = new SimpleBooleanProperty(false);
+    private SimpleBooleanProperty quitAccess = new SimpleBooleanProperty(false);
+    private SimpleBooleanProperty comboAccess = new SimpleBooleanProperty(false);
     private SimpleBooleanProperty chatAccess = new SimpleBooleanProperty(true);
-//    private MessageType selectType = null;
-//    private ObservableList<Player> currentVoteItems = FXCollections.observableArrayList();
+    private MessageType selectType = null;
+    private ObservableList<Player> currentVoteItems = FXCollections.observableArrayList();
     ObservableList<String> chatLog = FXCollections.observableArrayList();
-//    GameRoles clientRole = null;
+    private SimpleStringProperty selectButtonText = new SimpleStringProperty();
+    private SimpleStringProperty labelText = new SimpleStringProperty();
+    GameRoles clientRole = null;
 
 
 
@@ -68,9 +74,43 @@ public class Client implements Runnable, Serializable{
         }else if(message.getTitle() == MessageType.STARTVOTE){
             chatAccess.set(false);
         }else if(message.getTitle() == MessageType.ENDNIGHT){
-            buttonDisable.set(false);
-            quitDisable.set(false);
+            selectButtonAccess.set(false);
+            quitAccess.set(false);
             chatAccess.set(true);
+        }else if(message.getTitle() == MessageType.MAFIATARGET){
+            currentVoteItems.setAll((List<Player>)message.getContent());
+            selectType = MessageType.MAFIATARGET;
+            selectButtonText.set("Select");
+            selectButtonAccess.set(true);
+        }else if(message.getTitle() == MessageType.SPECIAL){
+            SpecialMessage temp = (SpecialMessage) message;
+            if(temp.getRole()== GameRoles.MAYOR){
+                selectButtonText.set("Select");
+                quitAccess.set(true);
+                selectButtonAccess.set(true);
+                comboAccess.set(true);
+            }else if(temp.getRole() == GameRoles.DIEHARD){
+                selectButtonAccess.set(true);
+                selectButtonText.set("Yes");
+            }else{
+                comboAccess.set(true);
+                selectButtonAccess.set(true);
+                selectButtonText.set("Select");
+            }
+            selectType = MessageType.SPECIAL;
+            if(temp.getRole()==GameRoles.DETECTIVE){
+                labelText.set("Which one you want to ask?");
+            }else if(temp.getRole()==GameRoles.LECTER || temp.getRole()==GameRoles.DOCTOR){
+                labelText.set("Which one you want to save?");
+            }else if(temp.getRole()==GameRoles.DIEHARD){
+                labelText.set("Do you want to ask died roles?");
+            }else if(temp.getRole() == GameRoles.MAYOR){
+                labelText.set("Select if you want cancel or quit vote");
+            }else if(temp.getRole() == GameRoles.PSYCHO){
+                labelText.set("Select if you want mute a player");
+            }else if(temp.getRole() == GameRoles.PRO){
+                labelText.set("Select if you want shoot a player");
+            }
         }
 //        }else if(message.getTitle().equals(MessageType.VOTE)){
 //            selectType = MessageType.VOTE;
@@ -120,16 +160,16 @@ public class Client implements Runnable, Serializable{
     }
 
     public ObservableBooleanValue isButtonDisable() {
-        return buttonDisable;
+        return selectButtonAccess;
     }
 
     public ObservableBooleanValue isQuitDisable() {
-        return quitDisable;
+        return quitAccess;
     }
 
-//    public MessageType getSelectType() {
-//        return selectType;
-//    }
+    public MessageType getSelectType() {
+        return selectType;
+    }
 
 
     public SimpleBooleanProperty chatAccessProperty() {
