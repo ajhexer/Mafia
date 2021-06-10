@@ -284,7 +284,7 @@ public class Game implements Runnable{
             }
         }else if(role.equals(GameRoles.DETECTIVE)){
             Detective tempDetective = (Detective) tempPlayer;
-            if(((Player)temp.getContent()) instanceof Godfather || !(temp.getContent() instanceof Mafia)){
+            if((temp.getContent()) instanceof Godfather || !(temp.getContent() instanceof Mafia)){
                 client.sendMessage(new Message(MessageType.SECRET, "Civilian"));
             }else{
                 client.sendMessage(new Message(MessageType.SECRET, "Mafia"));
@@ -294,11 +294,28 @@ public class Game implements Runnable{
             tempDiehard.setPublish(true);
             tempDiehard.setTimeToUseAbility(tempDiehard.getTimeToUseAbility()-1);
         }else if(role.equals(GameRoles.PSYCHO)){
-
+            Psycho tempPsycho = (Psycho) tempPlayer;
+            tempPsycho.setToBeMuted((Player) message.getContent());
+            Date date = new Date();
+            date.setSeconds(date.getSeconds()+300);
+            ((Player)temp.getContent()).setMutedUntil(date);
+        }else if(role.equals(GameRoles.LECTER)){
+            Lecter tempDoctor = (Lecter) tempPlayer;
+            if(tempDoctor.getTimeToUseAbility()>0){
+                if(((Player)temp.getContent()).equals(tempDoctor)){
+                    if(!tempDoctor.isSavedSelf()){
+                        tempDoctor.setSavedByDoctor(true);
+                    }
+                }else{
+                    ((Player)temp.getContent()).setSavedByDoctor(true);
+                }
+            }
         }
 
     }
+    private void processMafiaTarget(Message message, ClientThread client){
 
+    }
 
     private void deletePlayer(Player player){
 

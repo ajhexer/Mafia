@@ -3,6 +3,7 @@ package Characters;
 import datamodel.GameRoles;
 
 import java.io.Serializable;
+import java.util.Date;
 
 public class Player implements Serializable {
     protected GameRoles role = null;
@@ -16,7 +17,7 @@ public class Player implements Serializable {
     protected boolean shoot = false;
     protected Player heVotedTo = null;
     protected boolean isVoted = false;
-
+    protected Date mutedUntil = null;
     public Player(String name, GameRoles role){
         this.name = name;
         this.role = role;
@@ -66,4 +67,11 @@ public class Player implements Serializable {
         this.savedByDoctor = savedByDoctor;
     }
 
+    public Date getMutedUntil() {
+        return mutedUntil;
+    }
+
+    public void setMutedUntil(Date mutedUntil) {
+        this.mutedUntil = mutedUntil;
+    }
 }

@@ -10,4 +10,12 @@ public class Psycho extends Player{
         this.life = 1;
         this.timeToUseAbility = 10000;
     }
+
+    public void setToBeMuted(Player toBeMuted) {
+        this.toBeMuted = toBeMuted;
+    }
+
+    public Player getToBeMuted() {
+        return toBeMuted;
+    }
 }
