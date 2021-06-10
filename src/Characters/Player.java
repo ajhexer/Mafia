@@ -23,6 +23,13 @@ public class Player implements Serializable {
         this.role = role;
     }
 
+    public void resetPlayer(){
+        this.votedTo = 0;
+        this.savedByDoctor = false;
+        this.shoot = false;
+        this.heVotedTo = null;
+    }
+
     public String getName() {
         return name;
     }
@@ -74,4 +81,17 @@ public class Player implements Serializable {
     public void setMutedUntil(Date mutedUntil) {
         this.mutedUntil = mutedUntil;
     }
+
+    public boolean isSavedByDoctor() {
+        return savedByDoctor;
+    }
+
+    public int getLife() {
+        return life;
+    }
+
+    public void setLife(int life) {
+        this.life = life;
+    }
+
 }

@@ -188,16 +188,65 @@ public class Game implements Runnable{
                 }
             }
         }));
+        //TODO: Create timing and process for lecter
+
+    }
+    private void processNight(){
+        for(Player player: players){
+            if(player instanceof Mafia){
+                if(((Mafia)player).isHeadOfMafia()){
+                    Player mafiaTarget = ((Mafia)player).getMafiaTarget();
+                    if(!mafiaTarget.isSavedByDoctor()){
+                        if(mafiaTarget instanceof Diehard){
+                            Diehard temp = (Diehard) mafiaTarget;
+                            if(temp.getLife()>1){
+                                temp.setLife(temp.getLife()-1);
+                            }else{
+                                deletePlayer(mafiaTarget);
+                            }
+                        }else{
+                            deletePlayer(mafiaTarget);
+                        }
+                    }
+                }
+            }else if(player instanceof Pro){
+                Player proTarget = ((Pro)player).getTarget();
+                if(proTarget!=null){
+                    if(!proTarget.isSavedByDoctor() && proTarget instanceof Mafia){
+                        deletePlayer(proTarget);
+                    }else if(!(proTarget instanceof Mafia)){
+                        deletePlayer(player);
+                    }
+                }
+            }else if(player instanceof Psycho){
+                Player toBeMuted = ((Psycho)player).getToBeMuted();
+                if(toBeMuted!=null){
+                    baseServer.writeChatMessageToAll(new Message(MessageType.CHAT, "Game: Player " + toBeMuted.getName() + "muted by Psycho"));
+                }
+            }else if(player instanceof Diehard){
+                if(((Diehard)player).isPublish()){
+                    publishRoles();
+                }
+            }
+        }
+
     }
     private void endNight(){
+
+        for(Player player: players){
+            Date date = new Date();
+            if(player.getMutedUntil()!=null){
+                if(date.compareTo(player.getMutedUntil())>=0){
+                    player.setMutedUntil(null);
+                }
+            }
+            player.resetPlayer();
+
+        }
         playerToClient.forEach(((player, clientThread) -> {
             clientThread.sendMessage(new Message(MessageType.ENDNIGHT, new Object()));
         }));
    }
-    private void processNight(){
-
-
-    }
 
     private boolean checkEndCondition(){
         int mafiaNum = 0;
@@ -221,6 +270,8 @@ public class Game implements Runnable{
             processVoteMessage(message, client);
         }else if(message.getTitle()==MessageType.SPECIAL){
             processSpecialMessage(message, client);
+        }else if(message.getTitle()==MessageType.MAFIATARGET){
+            processMafiaTarget(message, client);
         }
     }
     private void processVoteMessage(Message message, ClientThread client){
@@ -331,9 +382,55 @@ public class Game implements Runnable{
     }
 
     private void deletePlayer(Player player){
-
+        if(player instanceof Mafia){
+            if(((Mafia)player).isHeadOfMafia()){
+                changeHeadOfMafia();
+            }
+        }
+        diedRoles.add(player.getRole());
+        players.remove(player);
+        playerToClient.get(player).sendMessage(new Message(MessageType.SECRET, "You are died"));
+        playerToClient.get(player).setAlive(false);
+        playerToClient.remove(player);
     }
     private void sendToHeadOfMafia(Mafia mafia, Player target){
+        for(Player player : players){
+            if(player instanceof Mafia){
+                if(((Mafia)player).isHeadOfMafia()){
+                    playerToClient.get(player).sendMessage(new Message(MessageType.SECRET, mafia.getName() + " choosed " +target.getName()));
+                    break;
+                }
+            }
+        }
+    }
+    private void changeHeadOfMafia(){
+        Mafia mafia = null;
+        for(Player player : players){
+            if(player instanceof Lecter){
+                mafia = (Mafia) player;
+                break;
+            }
+        }
+        if(mafia==null){
+            for(Player player: players){
+                if(player instanceof Mafia){
+                    mafia = (Mafia)player;
+                    break;
+                }
+            }
+        }
+        if(mafia==null){
+            return;
+        }
+        mafia.setHeadOfMafia(true);
+    }
 
+    private void publishRoles(){
+        StringBuilder toPublish = new StringBuilder();
+        for(GameRoles role: diedRoles){
+            toPublish.append(role.toString());
+            toPublish.append(" ");
+        }
+        baseServer.writeChatMessageToAll(new Message(MessageType.CHAT, toPublish.toString()));
     }
 }

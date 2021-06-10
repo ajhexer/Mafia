@@ -27,4 +27,11 @@ public class Mayor extends Player{
     public void setToBeQuited(Player toBeQuited) {
         this.toBeQuited = toBeQuited;
     }
+
+    @Override
+    public void resetPlayer() {
+        super.resetPlayer();
+        this.cancelPoll = false;
+        this.toBeQuited = null;
+    }
 }

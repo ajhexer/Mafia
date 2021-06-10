@@ -18,4 +18,10 @@ public class Diehard extends Player{
     public boolean isPublish() {
         return publish;
     }
+
+    @Override
+    public void resetPlayer() {
+        super.resetPlayer();
+        this.publish = false;
+    }
 }

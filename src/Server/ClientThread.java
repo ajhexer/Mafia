@@ -22,7 +22,7 @@ public class ClientThread implements Runnable , Serializable {
     private ObjectOutputStream outcomingMessage;
     private String name;
     private Game baseGame;
-
+    private boolean isAlive = true;
 
 
     public ClientThread(Socket clientSocket, Server baseServer) throws Exception{
@@ -104,5 +104,13 @@ public class ClientThread implements Runnable , Serializable {
 
     public void setBaseGame(Game baseGame) {
         this.baseGame = baseGame;
+    }
+
+    public boolean isAlive() {
+        return isAlive;
+    }
+
+    public void setAlive(boolean alive) {
+        isAlive = alive;
     }
 }

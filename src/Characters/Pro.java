@@ -14,4 +14,14 @@ public class Pro extends Player{
     public void setTarget(Player target) {
         this.target = target;
     }
+
+    public Player getTarget() {
+        return target;
+    }
+
+    @Override
+    public void resetPlayer() {
+        super.resetPlayer();
+        this.target = null;
+    }
 }

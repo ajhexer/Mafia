@@ -26,4 +26,10 @@ public class Lecter extends Mafia{
     public void setToBeSaved(Player toBeSaved) {
         this.toBeSaved = toBeSaved;
     }
+
+    @Override
+    public void resetPlayer() {
+        super.resetPlayer();
+        this.toBeSaved = null;
+    }
 }

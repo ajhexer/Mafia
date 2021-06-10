@@ -27,4 +27,10 @@ public class Doctor extends Player{
     public void setToBeSaved(Player toBeSaved) {
         this.toBeSaved = toBeSaved;
     }
+
+    @Override
+    public void resetPlayer() {
+        super.resetPlayer();
+        this.toBeSaved = null;
+    }
 }

@@ -25,4 +25,10 @@ public class Mafia extends Player{
     public void setHeadOfMafia(boolean headOfMafia) {
         this.headOfMafia = headOfMafia;
     }
+
+    @Override
+    public void resetPlayer() {
+        super.resetPlayer();
+        this.mafiaTarget = null;
+    }
 }

@@ -18,4 +18,10 @@ public class Psycho extends Player{
     public Player getToBeMuted() {
         return toBeMuted;
     }
+
+    @Override
+    public void resetPlayer() {
+        super.resetPlayer();
+        this.toBeMuted = null;
+    }
 }

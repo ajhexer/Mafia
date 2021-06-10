@@ -10,4 +10,10 @@ public class Detective extends Player{
         this.life = 1;
         this.timeToUseAbility = 10000;
     }
+
+    @Override
+    public void resetPlayer() {
+        super.resetPlayer();
+        this.targetToFound = null;
+    }
 }
