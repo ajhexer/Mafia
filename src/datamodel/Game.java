@@ -314,10 +314,26 @@ public class Game implements Runnable{
 
     }
     private void processMafiaTarget(Message message, ClientThread client){
-
+        Mafia tempMafia = null;
+        for(Player player: players){
+            if(playerToClient.get(player).equals(client)){
+                tempMafia = (Mafia) player;
+                break;
+            }
+        }
+        if(tempMafia==null){
+            throw new NullPointerException();
+        }
+        tempMafia.setMafiaTarget((Player) message.getContent());
+        if(!tempMafia.isHeadOfMafia()){
+            sendToHeadOfMafia(tempMafia, (Player) message.getContent());
+        }
     }
 
     private void deletePlayer(Player player){
+
+    }
+    private void sendToHeadOfMafia(Mafia mafia, Player target){
 
     }
 }
