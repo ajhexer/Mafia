@@ -24,11 +24,16 @@ public class Client implements Runnable, Serializable{
     private ObjectOutputStream clientToServerWriter;
     private Socket clientSocket;
     private String name;
-    private SimpleBooleanProperty selectButtonAccess = new SimpleBooleanProperty(false);
-    private SimpleBooleanProperty quitAccess = new SimpleBooleanProperty(false);
-    private SimpleBooleanProperty comboAccess = new SimpleBooleanProperty(false);
-    private SimpleBooleanProperty chatAccess = new SimpleBooleanProperty(true);
-    private MessageType selectType = null;
+    SimpleBooleanProperty selectButtonDisable = new SimpleBooleanProperty(true);
+    SimpleBooleanProperty quitButtonDisable = new SimpleBooleanProperty(true);
+    SimpleBooleanProperty comboDisable = new SimpleBooleanProperty(true);
+    SimpleBooleanProperty chatFieldDisable = new SimpleBooleanProperty(false);
+    SimpleBooleanProperty selectButtonVisible = new SimpleBooleanProperty(false);
+    SimpleBooleanProperty quitButtonVisible = new SimpleBooleanProperty(false);
+    SimpleBooleanProperty comboVisible = new SimpleBooleanProperty(false);
+
+
+    MessageType selectType = null;
     private ObservableList<Player> currentVoteItems = FXCollections.observableArrayList();
     ObservableList<String> chatLog = FXCollections.observableArrayList();
     SimpleStringProperty secretLog = new SimpleStringProperty("");
@@ -65,30 +70,40 @@ public class Client implements Runnable, Serializable{
         if(message.getTitle() == MessageType.CHAT) {
             chatLog.add((String) message.getContent());
         }else if(message.getTitle() == MessageType.STARTVOTE){
-            chatAccess.set(false);
+            chatFieldDisable.set(true);
         }else if(message.getTitle() == MessageType.ENDNIGHT){
-            selectButtonAccess.set(false);
-            quitAccess.set(false);
-            chatAccess.set(true);
-            comboAccess.set(false);
+            selectButtonVisible.set(false);
+            selectButtonDisable.set(true);
+            quitButtonVisible.set(false);
+            quitButtonDisable.set(true);
+            chatFieldDisable.set(false);
+            comboDisable.set(true);
+            comboVisible.set(false);
         }else if(message.getTitle() == MessageType.MAFIATARGET){
             currentVoteItems.setAll((List<Player>)message.getContent());
             selectType = MessageType.MAFIATARGET;
             selectButtonText.set("Select");
-            selectButtonAccess.set(true);
+            selectButtonDisable.set(false);
+            selectButtonVisible.set(true);
         }else if(message.getTitle() == MessageType.SPECIAL){
             SpecialMessage temp = (SpecialMessage) message;
             if(temp.getRole()== GameRoles.MAYOR){
                 selectButtonText.set("Select");
-                quitAccess.set(true);
-                selectButtonAccess.set(true);
-                comboAccess.set(true);
+                quitButtonVisible.set(true);
+                quitButtonDisable.set(false);
+                selectButtonVisible.set(true);
+                selectButtonDisable.set(false);
+                comboVisible.set(true);
+                comboDisable.set(false);
             }else if(temp.getRole() == GameRoles.DIEHARD){
-                selectButtonAccess.set(true);
+                selectButtonVisible.set(true);
+                selectButtonDisable.set(false);
                 selectButtonText.set("Yes");
             }else{
-                comboAccess.set(true);
-                selectButtonAccess.set(true);
+                comboVisible.set(true);
+                comboDisable.set(false);
+                selectButtonVisible.set(true);
+                selectButtonDisable.set(false);
                 selectButtonText.set("Select");
             }
             selectType = MessageType.SPECIAL;
@@ -110,13 +125,18 @@ public class Client implements Runnable, Serializable{
             lastSecret+=(String) message.getContent()+"\n";
             secretLog.set(lastSecret);
         }else if(message.getTitle() == MessageType.ENDVOTE){
-            selectButtonAccess.set(false);
-            quitAccess.set(false);
-            comboAccess.set(false);
+            selectButtonVisible.set(false);
+            selectButtonDisable.set(true);
+            quitButtonVisible.set(false);
+            quitButtonDisable.set(true);
+            comboVisible.set(false);
+            comboDisable.set(true);
         }else if(message.getTitle() == MessageType.VOTE){
             selectButtonText.set("Select");
-            selectButtonAccess.set(true);
-            comboAccess.set(true);
+            selectButtonVisible.set(true);
+            selectButtonDisable.set(false);
+            comboVisible.set(true);
+            comboDisable.set(false);
             currentVoteItems.setAll((List<Player>)message.getContent());
             labelText.set("Which one to vote");
         }
@@ -144,34 +164,10 @@ public class Client implements Runnable, Serializable{
         return chatLog;
     }
 
-    public ObservableBooleanValue isButtonDisable() {
-        return selectButtonAccess;
-    }
-
-    public ObservableBooleanValue isQuitDisable() {
-        return quitAccess;
-    }
-
     public MessageType getSelectType() {
         return selectType;
     }
 
-
-    public SimpleBooleanProperty chatAccessProperty() {
-        return chatAccess;
-    }
-
-    public void setSelectButtonAccess(boolean selectButtonAccess) {
-        this.selectButtonAccess.set(selectButtonAccess);
-    }
-
-    public void setQuitAccess(boolean quitAccess) {
-        this.quitAccess.set(quitAccess);
-    }
-
-    public void setComboAccess(boolean comboAccess) {
-        this.comboAccess.set(comboAccess);
-    }
     public Message readMessage()throws Exception{
         try{
             return (Message) serverToClientReader.readObject();
@@ -180,4 +176,7 @@ public class Client implements Runnable, Serializable{
         }
         throw new Exception();
     }
+
+
+
 }

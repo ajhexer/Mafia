@@ -2,10 +2,7 @@ package Client;
 
 import Server.ClientThread;
 
-import datamodel.GameRoles;
-import datamodel.Message;
-import datamodel.MessageType;
-import datamodel.SpecialMessage;
+import datamodel.*;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -35,12 +32,13 @@ public class MainController {
     private TextArea secretChat;
 
     public void initialize(){
+        chatTextField.textProperty().addListener(new RTLChange(chatTextField));
         clientThread = new Thread(client);
         clientThread.setDaemon(true);
         clientThread.start();
         chatListView.setItems(client.getChatLog());
         chatTextField.setWrapText(true);
-        chatTextField.disableProperty().bind(client.chatAccessProperty());
+        chatTextField.disableProperty().bind(client.chatFieldDisable);
         chatTextField.setOnKeyPressed(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent keyEvent) {
@@ -104,22 +102,25 @@ public class MainController {
                     client.sendMessage(new Message(MessageType.VOTE, nameBox.getSelectionModel().getSelectedItem()));
                 }else if(client.getSelectType()==MessageType.SPECIAL){
                     client.sendMessage(new Message(MessageType.SPECIAL, nameBox.getSelectionModel().getSelectedItem()));
-                    client.setComboAccess(false);
-                    client.setQuitAccess(false);
-                    client.setSelectButtonAccess(false);
+                    client.comboVisible.set(false);
+                    client.comboDisable.set(true);
+                    client.quitButtonVisible.set(false);
+                    client.quitButtonDisable.set(true);
+                    client.selectButtonVisible.set(false);
+                    client.selectButtonDisable.set(true);
                 }else if(client.getSelectType()== MessageType.MAFIATARGET){
                     client.sendMessage(new Message(MessageType.MAFIATARGET, nameBox.getSelectionModel().getSelectedItem()));
                 }
             }
         });
-        voteButton.visibleProperty().bind(client.isButtonDisable());
-        voteButton.disableProperty().bind(client.isButtonDisable());
-        nameBox.visibleProperty().bind(client.isButtonDisable());
-        nameBox.disableProperty().bind(client.isButtonDisable());
-        modeLabel.disableProperty().bind(client.isButtonDisable());
-        modeLabel.visibleProperty().bind(client.isButtonDisable());
-        quitButton.disableProperty().bind(client.isQuitDisable());
-        quitButton.visibleProperty().bind(client.isQuitDisable());
+        voteButton.visibleProperty().bind(client.selectButtonVisible);
+        voteButton.disableProperty().bind(client.selectButtonDisable);
+        nameBox.visibleProperty().bind(client.comboVisible);
+        nameBox.disableProperty().bind(client.comboDisable);
+        modeLabel.disableProperty().bind(client.selectButtonDisable);
+        modeLabel.visibleProperty().bind(client.selectButtonVisible);
+        quitButton.disableProperty().bind(client.quitButtonDisable);
+        quitButton.visibleProperty().bind(client.quitButtonVisible);
         quitButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
