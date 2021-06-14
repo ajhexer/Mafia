@@ -37,13 +37,17 @@ public class RegisterController {
     private Thread clientThread;
 
 
-
-
+    /**
+     * Initialize register page controller
+     */
     public void initialize(){
         loader = new FXMLLoader(getClass().getResource("MainPage.fxml"));
         controller = new MainController();
     }
 
+    /**
+     * Handle done button actions
+     */
     @FXML
     public void handleDoneButton(ActionEvent event){
         Platform.runLater(new Runnable() {
@@ -69,24 +73,22 @@ public class RegisterController {
                         stage.close();
                         stage.setScene(new Scene(root,900, 500));
                         stage.setResizable(false);
+                        stage.setTitle(nameField.getText());
                         stage.show();
                     }else{
                         errorLabel.setVisible(true);
                         errorLabel.setText("Please choose another name");
                         errorLabel.setTextFill(Color.RED);
                     }
-//                    clientThread.setDaemon(true);
-//                    clientThread.start();
-
                 }catch (ConnectException e){
-//                    Platform.runLater(new Runnable() {
-//                        @Override
-//                        public void run() {
-//                            errorLabel.setVisible(true);
-//                            errorLabel.setText("Invalid host name");
-//                            errorLabel.setTextFill(Color.RED);
-//                        }
-//                    });
+                    Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            errorLabel.setVisible(true);
+                            errorLabel.setText("Invalid host name");
+                            errorLabel.setTextFill(Color.RED);
+                        }
+                    });
                     e.printStackTrace();
                 }catch (NumberFormatException | IOException e){
                     Platform.runLater(new Runnable() {

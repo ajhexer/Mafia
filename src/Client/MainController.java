@@ -1,5 +1,6 @@
 package Client;
 
+import Characters.Player;
 import Server.ClientThread;
 
 import datamodel.*;
@@ -21,7 +22,7 @@ public class MainController {
     @FXML
     private TextArea chatTextField;
     @FXML
-    private ComboBox<ClientThread> nameBox;
+    private ComboBox<Player> nameBox;
     @FXML
     private Button voteButton;
     @FXML
@@ -34,6 +35,7 @@ public class MainController {
     private Button startButton;
 
     public void initialize(){
+
         chatTextField.textProperty().addListener(new RTLChange(chatTextField));
         clientThread = new Thread(client);
         clientThread.setDaemon(true);
@@ -41,6 +43,9 @@ public class MainController {
         chatListView.setItems(client.getChatLog());
         chatTextField.setWrapText(true);
         chatTextField.disableProperty().bind(client.chatFieldDisable);
+        /**
+         * Set action for text field
+         */
         chatTextField.setOnKeyPressed(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent keyEvent) {
@@ -50,6 +55,9 @@ public class MainController {
                 }
             }
         });
+        /**
+         * Set factory cell for chat logs
+         */
         chatListView.setCellFactory(new Callback<ListView<String>, ListCell<String>>() {
             @Override
             public ListCell<String> call(ListView<String> stringListView) {
@@ -81,21 +89,10 @@ public class MainController {
                 return cell;
             }
         });
-        nameBox.setCellFactory(new Callback<ListView<ClientThread>, ListCell<ClientThread>>() {
-            @Override
-            public ListCell<ClientThread> call(ListView<ClientThread> clientThreadListView) {
-                return new ListCell<ClientThread>(){
-                    @Override
-                    protected void updateItem(ClientThread clientThread, boolean b) {
-                        if(clientThread==null || b){
-                            setGraphic(null);
-                        }else{
-                            setText(clientThread.getName());
-                        }
-                    }
-                };
-            }
-        });
+        nameBox.setItems(client.currentVoteItems);
+        /**
+         * Set action for ready button
+         */
         startButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -106,14 +103,32 @@ public class MainController {
             }
 
         });
+        /**
+         * Set action for vote button
+         */
         voteButton.setOnAction(new EventHandler<ActionEvent>() {
 
             @Override
             public void handle(ActionEvent event) {
+
                 if (client.getSelectType()==MessageType.VOTE){
-                    client.sendMessage(new Message(MessageType.VOTE, nameBox.getSelectionModel().getSelectedItem()));
+                    if(nameBox.getSelectionModel().getSelectedItem()!=null){
+                        client.sendMessage(new Message(MessageType.VOTE, nameBox.getSelectionModel().getSelectedItem()));
+                    }
                 }else if(client.getSelectType()==MessageType.SPECIAL){
-                    client.sendMessage(new Message(MessageType.SPECIAL, nameBox.getSelectionModel().getSelectedItem()));
+                    if(client.clientRole==GameRoles.DETECTIVE){
+                        client.sendMessage(new Message(MessageType.SPECIAL, nameBox.getSelectionModel().getSelectedItem()));
+                    }else if(client.clientRole==GameRoles.DIEHARD){
+                        client.sendMessage(new Message(MessageType.SPECIAL, ""));
+                    }else if((client.clientRole==GameRoles.DOCTOR || client.clientRole==GameRoles.LECTER)&&(nameBox.getSelectionModel().getSelectedItem()!=null)){
+                        client.sendMessage(new Message(MessageType.SPECIAL, nameBox.getSelectionModel().getSelectedItem()));
+                    }else if(client.clientRole==GameRoles.PRO && nameBox.getSelectionModel().getSelectedItem()!=null){
+                        client.sendMessage(new Message(MessageType.SPECIAL, nameBox.getSelectionModel().getSelectedItem()));
+                    }else if(client.clientRole==GameRoles.PSYCHO && nameBox.getSelectionModel().getSelectedItem()!=null){
+                        client.sendMessage(new Message(MessageType.SPECIAL, nameBox.getSelectionModel().getSelectedItem()));
+                    }else if(client.clientRole==GameRoles.MAYOR && nameBox.getSelectionModel().getSelectedItem()!=null){
+                        client.sendMessage(new Message(MessageType.SPECIAL, nameBox.getSelectionModel().getSelectedItem()));
+                    }
                     client.comboVisible.set(false);
                     client.comboDisable.set(true);
                     client.quitButtonVisible.set(false);
@@ -133,6 +148,9 @@ public class MainController {
         modeLabel.visibleProperty().bind(client.selectButtonVisible);
         quitButton.disableProperty().bind(client.quitButtonDisable);
         quitButton.visibleProperty().bind(client.quitButtonVisible);
+        /**
+         * Set action for cancel button
+         */
         quitButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -141,7 +159,7 @@ public class MainController {
         });
         secretChat.textProperty().bind(client.secretLog);
         secretChat.setEditable(false);
-
+        nameBox.getSelectionModel().selectFirst();
     }
     public void setClient(Client client){
         this.client = client;

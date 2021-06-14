@@ -22,6 +22,10 @@ public class Server implements Runnable, Serializable {
     private ObservableList<String> disconnectionLog = FXCollections.observableArrayList();
     private int playersNum;
     private boolean isReady = false;
+
+    /**
+     * Constructor for server
+     */
     public Server(int port, int playersNum) throws IOException {
         socket = new ServerSocket(port);
         clientThreads = new ArrayList<>();
@@ -75,11 +79,19 @@ public class Server implements Runnable, Serializable {
 
 
     }
+
+    /**
+     * Method for writing one message to all clients
+     */
     public synchronized void writeChatMessageToAll(Message message){
         for(ClientThread client: clientThreads){
             client.sendMessage(message);
         }
     }
+
+    /**
+     * Disconnect specific client from server
+     */
     public synchronized void disconnectClient(ClientThread client){
         try {
             Platform.runLater(new Runnable() {
@@ -93,9 +105,14 @@ public class Server implements Runnable, Serializable {
 
         }
     }
+
+    /**
+     * @return client threads
+     */
     public ArrayList<ClientThread> getClientThreads(){
         return clientThreads;
     }
+
 
     public ObservableList<String> getConnectionLog() {
         return connectionLog;

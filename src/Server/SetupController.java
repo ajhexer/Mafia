@@ -26,13 +26,17 @@ public class SetupController {
     private ServerMainController controller;
     private Server server;
 
-
+    /**
+     * Initialize setup page
+     */
     public void initialize(){
         loader = new FXMLLoader(getClass().getResource("ServerMain.fxml"));
         controller = new ServerMainController();
     }
 
-
+    /**
+     * Handle setup page
+     */
     @FXML
     public void handleSetup(ActionEvent event){
         Platform.runLater(new Runnable() {
@@ -64,6 +68,7 @@ public class SetupController {
             Parent root = loader.load();
             stage.close();
             stage.setScene(new Scene(root,400, 600));
+            stage.setTitle("Server");
             stage.show();
         }catch (IOException e){
             Platform.runLater(new Runnable() {

@@ -5,6 +5,7 @@ import datamodel.GameRoles;
 import datamodel.Message;
 import datamodel.MessageType;
 import datamodel.SpecialMessage;
+import javafx.application.Platform;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ObservableBooleanValue;
@@ -34,7 +35,7 @@ public class Client implements Runnable, Serializable{
 
 
     MessageType selectType = null;
-    private ObservableList<Player> currentVoteItems = FXCollections.observableArrayList();
+    ObservableList<Player> currentVoteItems = FXCollections.observableArrayList();
     ObservableList<String> chatLog = FXCollections.observableArrayList();
     SimpleStringProperty secretLog = new SimpleStringProperty("");
     private SimpleStringProperty selectButtonText = new SimpleStringProperty();
@@ -107,6 +108,7 @@ public class Client implements Runnable, Serializable{
                 selectButtonText.set("Select");
             }
             selectType = MessageType.SPECIAL;
+            clientRole = ((SpecialMessage) message).getRole();
             if(temp.getRole()==GameRoles.DETECTIVE){
                 labelText.set("Which one you want to ask?");
             }else if(temp.getRole()==GameRoles.LECTER || temp.getRole()==GameRoles.DOCTOR){
@@ -121,9 +123,13 @@ public class Client implements Runnable, Serializable{
                 labelText.set("Select if you want shoot a player");
             }
         }else if(message.getTitle() == MessageType.SECRET){
-            String lastSecret = secretLog.get();
-            lastSecret+=(String) message.getContent()+"\n";
-            secretLog.set(lastSecret);
+            String lastSecret = secretLog.get()+(String) message.getContent()+"\n";
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    secretLog.set(lastSecret);
+                }
+            });
         }else if(message.getTitle() == MessageType.ENDVOTE){
             selectButtonVisible.set(false);
             selectButtonDisable.set(true);

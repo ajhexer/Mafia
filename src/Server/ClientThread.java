@@ -93,6 +93,10 @@ public class ClientThread implements Runnable , Serializable {
 
     }
 
+    /**
+     * Process every messages from client
+     * @param message the message from client
+     */
     private void processMessage(Message message){
 
         if(message.getTitle() == MessageType.STARTGAME){
@@ -105,7 +109,10 @@ public class ClientThread implements Runnable , Serializable {
             baseGame.processGameMessages(message, this);
         }
     }
-//
+
+    /**
+     * Sent message to the client
+     */
     public void sendMessage(Message message){
         try {
             outcomingMessage.writeObject(message);
@@ -129,6 +136,9 @@ public class ClientThread implements Runnable , Serializable {
         return name;
     }
 
+    /**
+     * Set base game
+     */
     public void setBaseGame(Game baseGame) {
         this.baseGame = baseGame;
     }
@@ -137,10 +147,16 @@ public class ClientThread implements Runnable , Serializable {
         return isAlive;
     }
 
+    /**
+     * Set if player if alive
+     */
     public void setAlive(boolean alive) {
         isAlive = alive;
     }
 
+    /**
+     * Set player mute
+     */
     public void setMuted(boolean muted) {
         this.muted = muted;
     }

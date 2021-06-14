@@ -14,18 +14,26 @@ public class Game implements Runnable{
     private ArrayList<GameRoles> diedRoles = new ArrayList<>();
     private HashMap<Player, ClientThread> playerToClient = new HashMap<Player, ClientThread>();
     private boolean isEnded = false;
+
+    /**
+     * Constructor for game
+     * @param server the base class of the game
+     */
     public Game(Server server){
         this.baseServer = server;
         playersNum = baseServer.getClientThreads().size();
     }
 
+    /**
+     * Run method for game thread
+     */
     @Override
     public void run() {
         createRoles();
         createPlayers();
         while(!isEnded){
             try {
-                Thread.sleep(300000);
+                Thread.sleep(3000);
             }catch (InterruptedException e){
                 e.printStackTrace();
             }
@@ -50,6 +58,9 @@ public class Game implements Runnable{
 
     }
 
+    /**
+     * Creating game roles
+     */
     private void createRoles(){
         inGameRoles = new ArrayList<>();
         GameRoles[] tempRoles = GameRoles.values();
@@ -82,6 +93,10 @@ public class Game implements Runnable{
         }
         Collections.shuffle(inGameRoles);
     }
+
+    /**
+     * Creating game players
+     */
     private void createPlayers(){
         List<ClientThread> clients = baseServer.getClientThreads();
         for(int i=0; i<clients.size(); i++){
@@ -115,11 +130,19 @@ public class Game implements Runnable{
             clients.get(i).sendMessage(new Message(MessageType.SECRET, "You are " + temp.getRole()));
         }
     }
+
+    /**
+     * Starting vote process
+     */
     private void startVote(){
         playerToClient.forEach((player, clientThread) -> {
             clientThread.sendMessage(new Message(MessageType.STARTVOTE, ""));
         });
     }
+
+    /**
+     * Creating votes
+     */
     private void createVote(){
         //TODO create voting functionality
         System.out.println("Creating vote");
@@ -131,6 +154,7 @@ public class Game implements Runnable{
         }catch (InterruptedException e){
             e.printStackTrace();
         }
+        endVote();
         System.out.println("Asking mayor");
         playerToClient.forEach(((player, clientThread) -> {
             if(player instanceof Mayor){
@@ -146,11 +170,19 @@ public class Game implements Runnable{
         }));
 
     }
+
+    /**
+     * End voting process
+     */
     private void endVote(){
         playerToClient.forEach(((player, clientThread) -> {
             clientThread.sendMessage(new Message(MessageType.ENDVOTE, ""));
         }));
     }
+
+    /**
+     * Processing votes
+     */
     private void processVote(){
         Mayor mayor = null;
         for(Player player: players){
@@ -177,6 +209,10 @@ public class Game implements Runnable{
             deletePlayer(players.get(0));
         }
     }
+
+    /**
+     * Starting night process
+     */
     private void startNight(){
         playerToClient.forEach(((player, clientThread) -> {
             if(player instanceof Mafia){
@@ -187,9 +223,29 @@ public class Game implements Runnable{
                 }
             }
         }));
-        //TODO: Create timing and process for lecter
+        try{
+            Thread.sleep(35000);
+        }catch (InterruptedException e){
+            e.printStackTrace();
+        }
+        for(Player player: players){
+            if(player.getRole().equals(GameRoles.LECTER)){
+                playerToClient.get(player).sendMessage(new SpecialMessage(MessageType.SPECIAL, players, player.getRole()));
+                try {
+                    Thread.sleep(12000);
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+                break;
+            }
+        }
+
 
     }
+
+    /**
+     * processing night
+     */
     private void processNight(){
         for(Player player: players){
             if(player instanceof Mafia){
@@ -231,6 +287,10 @@ public class Game implements Runnable{
         }
 
     }
+
+    /**
+     * End night process
+     */
     private void endNight(){
 
         for(Player player: players){
@@ -250,6 +310,9 @@ public class Game implements Runnable{
         }));
    }
 
+    /**
+     * Check if the game is finished
+     */
     private boolean checkEndCondition(){
         int mafiaNum = 0;
         int civilNum = 0;
@@ -266,8 +329,12 @@ public class Game implements Runnable{
         return false;
     }
 
-
-    public void processGameMessages(Message message, ClientThread client){
+    /**
+     * Processing game messages
+     * @param message the received message
+     * @param client client thread of that player
+     */
+    public synchronized void processGameMessages(Message message, ClientThread client){
         if(message.getTitle()==MessageType.VOTE){
             processVoteMessage(message, client);
         }else if(message.getTitle()==MessageType.SPECIAL){
@@ -276,6 +343,10 @@ public class Game implements Runnable{
             processMafiaTarget(message, client);
         }
     }
+
+    /**
+     * Process Vote type message
+     */
     private void processVoteMessage(Message message, ClientThread client){
         Player temp = null;
         for(Player player : playerToClient.keySet()){
@@ -299,6 +370,10 @@ public class Game implements Runnable{
         }
 
     }
+
+    /**
+     * Process ability type of messages
+     */
     private void processSpecialMessage(Message message, ClientThread client){
         SpecialMessage temp = (SpecialMessage)message;
         GameRoles role = temp.getRole();
@@ -366,6 +441,10 @@ public class Game implements Runnable{
         }
 
     }
+
+    /**
+     * Process target of the mafia
+     */
     private void processMafiaTarget(Message message, ClientThread client){
         Mafia tempMafia = null;
         for(Player player: players){
@@ -383,7 +462,11 @@ public class Game implements Runnable{
         }
     }
 
-    private void deletePlayer(Player player){
+    /**
+     * Delete player from the game
+     * @param player
+     */
+    private synchronized void deletePlayer(Player player){
         if(player instanceof Mafia){
             if(((Mafia)player).isHeadOfMafia()){
                 changeHeadOfMafia();
@@ -397,6 +480,10 @@ public class Game implements Runnable{
         playerToClient.get(player).setAlive(false);
         playerToClient.remove(player);
     }
+
+    /**
+     * Send message to the head of the mafia
+     */
     private void sendToHeadOfMafia(Mafia mafia, Player target){
         for(Player player : players){
             if(player instanceof Mafia){
@@ -407,6 +494,10 @@ public class Game implements Runnable{
             }
         }
     }
+
+    /**
+     * Change head of the mafia
+     */
     private void changeHeadOfMafia(){
         Mafia mafia = null;
         for(Player player : players){
@@ -429,6 +520,9 @@ public class Game implements Runnable{
         mafia.setHeadOfMafia(true);
     }
 
+    /**
+     * Publish died roles of the game
+     */
     private void publishRoles(){
         StringBuilder toPublish = new StringBuilder();
         for(GameRoles role: diedRoles){
@@ -437,7 +531,11 @@ public class Game implements Runnable{
         }
         baseServer.writeChatMessageToAll(new Message(MessageType.CHAT, "Game: " + toPublish.toString()+"are died roles"));
     }
-    public void deleteByClientThread(ClientThread client){
+
+    /**
+     * Delete player by it's thread
+     */
+    public synchronized void deleteByClientThread(ClientThread client){
         playerToClient.forEach(((player, clientThread) -> {
             if(clientThread.equals(client)){
                 String name = player.getName();
