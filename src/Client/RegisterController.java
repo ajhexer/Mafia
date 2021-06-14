@@ -59,10 +59,8 @@ public class RegisterController {
             @Override
             public void run() {
                 try {
-                    if(client==null){
-                        client = new Client(ipField.getText(), Integer.parseInt(portField.getText()), nameField.getText());
-                        controller.setClient(client);
-                    }
+                    client = new Client(ipField.getText(), Integer.parseInt(portField.getText()), nameField.getText());
+                    controller.setClient(client);
                     client.sendMessage(new Message(MessageType.REGISTER, nameField.getText()));
                     Message message = client.readMessage();
                     if((Boolean) message.getContent()){
@@ -81,14 +79,15 @@ public class RegisterController {
 //                    clientThread.start();
 
                 }catch (ConnectException e){
-                    Platform.runLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            errorLabel.setVisible(true);
-                            errorLabel.setText("Invalid host name");
-                            errorLabel.setTextFill(Color.RED);
-                        }
-                    });
+//                    Platform.runLater(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            errorLabel.setVisible(true);
+//                            errorLabel.setText("Invalid host name");
+//                            errorLabel.setTextFill(Color.RED);
+//                        }
+//                    });
+                    e.printStackTrace();
                 }catch (NumberFormatException | IOException e){
                     Platform.runLater(new Runnable() {
                         @Override

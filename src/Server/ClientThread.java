@@ -73,7 +73,11 @@ public class ClientThread implements Runnable , Serializable {
                 }
             }catch (SocketException e){
                 isAlive = false;
-                baseGame.deleteByClientThread(this);
+                if(baseGame!=null){
+                    baseGame.deleteByClientThread(this);
+                }else {
+                    baseServer.disconnectClient(this);
+                }
                 try{
                     clientSocket.close();
                 }catch (Exception c){
@@ -81,14 +85,7 @@ public class ClientThread implements Runnable , Serializable {
                 }
                 break;
             }catch (Exception e){
-//                System.out.println( name + " "+clientSocket.getInetAddress() + " Disconnected");
-//                try{
-//                    clientSocket.close();
-//                }catch (Exception e1){
-//
-//                }
-//                baseServer.disconnectClient(this);
-//                break;
+
                 e.printStackTrace();
             }
         }
@@ -111,26 +108,22 @@ public class ClientThread implements Runnable , Serializable {
     public void sendMessage(Message message){
         try {
             outcomingMessage.writeObject(message);
+        }catch (SocketException e){
+            isAlive = false;
+            if(baseGame!=null){
+                baseGame.deleteByClientThread(this);
+            }else {
+                baseServer.disconnectClient(this);
+            }
+            try{
+                clientSocket.close();
+            }catch (Exception c){
+                e.printStackTrace();
+            }
         }catch (Exception e){
-//            try{
-//                clientSocket.close();
-//            }catch (Exception exception){
-//
-//            }
-//            baseServer.disconnectClient(this);
-            e.printStackTrace();
+
         }
     }
-
-//
-//    public void setBasePlayer(Player basePlayer) {
-//        this.basePlayer = basePlayer;
-//    }
-//
-//    public Player getBasePlayer() {
-//        return basePlayer;
-//    }
-//
     public String getName() {
         return name;
     }

@@ -1,28 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<BorderPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="Server.SetupController"
-            prefHeight="400.0" prefWidth="600.0">
-    <center>
-        <VBox alignment="CENTER" prefHeight="280.0" prefWidth="518.0" spacing="10">
-        <GridPane alignment="CENTER" hgap="10" vgap="10" >
-            <Label text="Port" GridPane.columnIndex="0" GridPane.rowIndex="0" />
-            <TextField fx:id="portField" GridPane.columnIndex="1" GridPane.rowIndex="0" text="1234" />
-        </GridPane>
-            <Label fx:id="errorLabel" text=""/>
-        <Button text="Done" onAction="#handleSetup" >
-            <VBox.margin>
-                <Insets top="40"/>
-            </VBox.margin>
-        </Button>
 
-        </VBox>
-    </center>
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Server.SetupController">
 
-</BorderPane>
+
+
+                <Label layoutX="63.0" layoutY="147.0" text="Port" />
+                <TextField fx:id="playersNum" layoutX="124.0" layoutY="188.0" />
+
+
+
+                <Label layoutX="52.0" layoutY="192.0" text="Number" />
+                <TextField fx:id="portField" layoutX="124.0" layoutY="143.0" text="1234">
+
+                </TextField>
+
+            <Label fx:id="errorLabel" layoutX="110.0" layoutY="224.0" prefHeight="17.0" prefWidth="177.0" text="" />
+            <Button layoutX="162.0" layoutY="252.0" onAction="#handleSetup" text="Done">
+
+            </Button>
+
+
+</AnchorPane>

@@ -20,9 +20,12 @@ public class SetupController {
     private TextField portField;
     @FXML
     private Label errorLabel;
+    @FXML
+    private TextField playersNum;
     private FXMLLoader loader;
     private ServerMainController controller;
     private Server server;
+
 
     public void initialize(){
         loader = new FXMLLoader(getClass().getResource("ServerMain.fxml"));
@@ -39,9 +42,20 @@ public class SetupController {
             }
         });
         try {
+            if(playersNum.getText()==null || Integer.parseInt(playersNum.getText())<4){
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        errorLabel.setVisible(true);
+                        errorLabel.setTextFill(Color.RED);
+                        errorLabel.setText("Invalid port");
+                    }
+                });
+                return;
+            }
             Node source = (Node) event.getSource();
             Stage stage = (Stage) source.getScene().getWindow();
-            server = new Server(Integer.parseInt(portField.getText()));
+            server = new Server(Integer.parseInt(portField.getText()), Integer.parseInt(playersNum.getText()));
             Thread serverThread = new Thread(server);
             serverThread.setDaemon(true);
             serverThread.start();
@@ -67,7 +81,7 @@ public class SetupController {
                 public void run() {
                     errorLabel.setVisible(true);
                     errorLabel.setTextFill(Color.RED);
-                    errorLabel.setText("Unknown error");
+                    errorLabel.setText("Invalid port or player number");
                 }
             });
         }

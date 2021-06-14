@@ -1,7 +1,9 @@
 package Server;
 
 
+import Characters.Player;
 import datamodel.Message;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
 import java.io.IOException;
@@ -14,12 +16,15 @@ public class Server implements Runnable, Serializable {
     private ArrayList<ClientThread> clientThreads;
     private ArrayList<Socket> clients;
     private ServerSocket socket;
-    private ObservableList<String> serverLog;
-    public Server(int port) throws IOException {
+    private ObservableList<String> connectionLog = FXCollections.observableArrayList();
+    private ObservableList<String> disconnectionLog = FXCollections.observableArrayList();
+    private int playersNum;
+    public Server(int port, int playersNum) throws IOException {
         socket = new ServerSocket(port);
         clientThreads = new ArrayList<>();
         clients = new ArrayList<>();
         socket.setReuseAddress(true);
+        this.playersNum = playersNum;
     }
 
     @Override
@@ -27,16 +32,13 @@ public class Server implements Runnable, Serializable {
         while(true){
             try{
                 Socket client = socket.accept();
-
                 clients.add(client);
+                connectionLog.add(client.toString() +" connected");
                 ClientThread holder = new ClientThread(client, this);
                 clientThreads.add(holder);
                 Thread clientThread = new Thread(holder);
                 clientThread.setDaemon(true);
                 clientThread.start();
-                if(clientThreads.size()>=4){
-                    break;
-                }
             }catch (IOException e){
                 e.printStackTrace();
             }catch (Exception e){
@@ -55,6 +57,7 @@ public class Server implements Runnable, Serializable {
     }
     public synchronized void disconnectClient(ClientThread client){
         try {
+            disconnectionLog.add(client.getName()+" disconnected");
             clientThreads.remove(client);
         }catch (NullPointerException e){
 
@@ -64,5 +67,11 @@ public class Server implements Runnable, Serializable {
         return clientThreads;
     }
 
+    public ObservableList<String> getConnectionLog() {
+        return connectionLog;
+    }
 
+    public ObservableList<String> getDisconnectionLog() {
+        return disconnectionLog;
+    }
 }

@@ -12,6 +12,8 @@ public enum MessageType implements Serializable {
     ENDNIGHT,
     ENDVOTE,
     SECRET,
+    STARTGAME,
+
 
 
 

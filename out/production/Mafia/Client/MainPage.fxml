@@ -22,7 +22,7 @@
                 </TextArea>
             </VBox>
         </HBox>
-        <TextArea />
+        <TextArea fx:id="secretChat"/>
 
     </VBox>
    <columnConstraints>

@@ -391,6 +391,7 @@ public class Game implements Runnable{
         diedRoles.add(player.getRole());
         players.remove(player);
         playerToClient.get(player).sendMessage(new Message(MessageType.SECRET, "You are died"));
+        baseServer.writeChatMessageToAll(new Message(MessageType.CHAT, "Game: "+player.getName()+" died"));
         baseServer.disconnectClient(playerToClient.get(player));
         playerToClient.get(player).setAlive(false);
         playerToClient.remove(player);
@@ -433,7 +434,7 @@ public class Game implements Runnable{
             toPublish.append(role.toString());
             toPublish.append(" ");
         }
-        baseServer.writeChatMessageToAll(new Message(MessageType.CHAT, toPublish.toString()));
+        baseServer.writeChatMessageToAll(new Message(MessageType.CHAT, "Game: " + toPublish.toString()+"are died roles"));
     }
     public void deleteByClientThread(ClientThread client){
         playerToClient.forEach(((player, clientThread) -> {

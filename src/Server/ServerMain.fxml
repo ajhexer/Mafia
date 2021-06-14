@@ -1,15 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.ListView?>
-<?import javafx.scene.layout.BorderPane?>
+
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.control.ListView?>
 <BorderPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
     <center>
         <VBox alignment="CENTER" prefWidth="300" maxWidth="300" spacing="10">
-            <ListView maxHeight="180">
+            <ListView maxHeight="180" fx:id="connectionList">
 
             </ListView>
-            <ListView maxHeight="180">
+            <ListView maxHeight="180" fx:id="disconnectionList">
 
             </ListView>
         </VBox>
