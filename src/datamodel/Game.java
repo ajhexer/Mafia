@@ -53,8 +53,13 @@ public class Game implements Runnable{
 
 
         }
+        if(whichWon()==GameRoles.CIVILIAN){
+            baseServer.writeChatMessageToAll(new Message(MessageType.SPECIAL, "Game: citizens won the game"));
+        }else{
+            baseServer.writeChatMessageToAll(new Message(MessageType.CHAT, "Game: mafia won the game"));
+        }
 
-        //TODO: End of the game and say which team won the game and finish
+
 
     }
 
@@ -545,5 +550,25 @@ public class Game implements Runnable{
                 baseServer.writeChatMessageToAll(new Message(MessageType.CHAT, "Game: " +name+" left the game"));
             }
         }));
+    }
+
+    /**
+     * @return which team won the game
+     */
+    private GameRoles whichWon(){
+        int mafiaNum = 0;
+        int civilNum = 0;
+        for(Player player: players){
+            if(player instanceof Mafia){
+                mafiaNum++;
+            }else{
+                civilNum++;
+            }
+        }
+        if(mafiaNum==0){
+            return GameRoles.CIVILIAN;
+        }else{
+            return GameRoles.SIMPLEMAFIA;
+        }
     }
 }
