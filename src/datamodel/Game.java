@@ -14,7 +14,7 @@ public class Game implements Runnable{
     private ArrayList<GameRoles> diedRoles = new ArrayList<>();
     private HashMap<Player, ClientThread> playerToClient = new HashMap<Player, ClientThread>();
     private boolean isEnded = false;
-    private Game(Server server){
+    public Game(Server server){
         this.baseServer = server;
         playersNum = baseServer.getClientThreads().size();
     }
@@ -117,7 +117,7 @@ public class Game implements Runnable{
     }
     private void startVote(){
         playerToClient.forEach((player, clientThread) -> {
-            clientThread.sendMessage(new Message(MessageType.STARTVOTE, new Object()));
+            clientThread.sendMessage(new Message(MessageType.STARTVOTE, ""));
         });
     }
     private void createVote(){
@@ -148,7 +148,7 @@ public class Game implements Runnable{
     }
     private void endVote(){
         playerToClient.forEach(((player, clientThread) -> {
-            clientThread.sendMessage(new Message(MessageType.ENDVOTE, new Object()));
+            clientThread.sendMessage(new Message(MessageType.ENDVOTE, ""));
         }));
     }
     private void processVote(){
@@ -245,7 +245,8 @@ public class Game implements Runnable{
 
         }
         playerToClient.forEach(((player, clientThread) -> {
-            clientThread.sendMessage(new Message(MessageType.ENDNIGHT, new Object()));
+            clientThread.sendMessage(new Message(MessageType.ENDNIGHT, ""));
+            clientThread.sendMessage(new Message(MessageType.ENDNIGHT, ""));
         }));
    }
 
@@ -391,8 +392,8 @@ public class Game implements Runnable{
         diedRoles.add(player.getRole());
         players.remove(player);
         playerToClient.get(player).sendMessage(new Message(MessageType.SECRET, "You are died"));
-        baseServer.writeChatMessageToAll(new Message(MessageType.CHAT, "Game: "+player.getName()+" died"));
         baseServer.disconnectClient(playerToClient.get(player));
+        baseServer.writeChatMessageToAll(new Message(MessageType.CHAT, "Game: "+player.getName()+" died"));
         playerToClient.get(player).setAlive(false);
         playerToClient.remove(player);
     }
@@ -439,7 +440,11 @@ public class Game implements Runnable{
     public void deleteByClientThread(ClientThread client){
         playerToClient.forEach(((player, clientThread) -> {
             if(clientThread.equals(client)){
-                deletePlayer(player);
+                String name = player.getName();
+                players.remove(player);
+                baseServer.disconnectClient(clientThread);
+                clientThread.setAlive(false);
+                baseServer.writeChatMessageToAll(new Message(MessageType.CHAT, "Game: " +name+" left the game"));
             }
         }));
     }

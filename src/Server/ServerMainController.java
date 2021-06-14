@@ -1,6 +1,8 @@
 package Server;
 
 
+import Characters.Player;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
@@ -32,10 +34,19 @@ public class ServerMainController {
                         setMaxWidth(getWidth());
                         setPrefWidth(getWidth());
                         if(b){
-                            setText(null);
+                            Platform.runLater(new Runnable() {
+                                @Override
+                                public void run() {
+                                    setText(null);
+                                }
+                            });
                         }else{
-                            setText(log);
-
+                            Platform.runLater(new Runnable() {
+                                @Override
+                                public void run() {
+                                    setText(log);
+                                }
+                            });
                         }
 
                     }

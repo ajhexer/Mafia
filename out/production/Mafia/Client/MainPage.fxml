@@ -2,6 +2,7 @@
 
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+
 <GridPane prefHeight="500" prefWidth="900" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
     <VBox spacing="5">
 
@@ -12,6 +13,7 @@
             <Button fx:id="voteButton" layoutX="173.0" layoutY="168.0" mnemonicParsing="false" text="Select" />
             <Label fx:id="modeLabel" layoutX="180.0" layoutY="74.0" text="Label" />
             <Button fx:id="quitButton" layoutX="166.0" layoutY="233.0" mnemonicParsing="false" text="Quit Vote" />
+            <Button layoutX="371.0" layoutY="168.0" mnemonicParsing="false" text="Ready" fx:id="startButton"/>
             </AnchorPane>
             <VBox spacing="10">
                 <ListView fx:id="chatListView" prefHeight="313.0" prefWidth="616.0">
@@ -22,7 +24,7 @@
                 </TextArea>
             </VBox>
         </HBox>
-        <TextArea fx:id="secretChat"/>
+        <TextArea fx:id="secretChat" />
 
     </VBox>
    <columnConstraints>

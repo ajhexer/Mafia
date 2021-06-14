@@ -2,7 +2,9 @@ package Server;
 
 
 import Characters.Player;
+import datamodel.Game;
 import datamodel.Message;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
@@ -19,6 +21,7 @@ public class Server implements Runnable, Serializable {
     private ObservableList<String> connectionLog = FXCollections.observableArrayList();
     private ObservableList<String> disconnectionLog = FXCollections.observableArrayList();
     private int playersNum;
+    private boolean isReady = false;
     public Server(int port, int playersNum) throws IOException {
         socket = new ServerSocket(port);
         clientThreads = new ArrayList<>();
@@ -39,6 +42,11 @@ public class Server implements Runnable, Serializable {
                 Thread clientThread = new Thread(holder);
                 clientThread.setDaemon(true);
                 clientThread.start();
+                if(clientThreads.size()==playersNum){
+                    System.out.println(playersNum);
+                    System.out.println(clientThreads.size());
+                    break;
+                }
             }catch (IOException e){
                 e.printStackTrace();
             }catch (Exception e){
@@ -46,6 +54,23 @@ public class Server implements Runnable, Serializable {
             }
 
         }
+        while(!isReady){
+            isReady = true;
+            for(ClientThread client: clientThreads){
+                if(client.isReady==false){
+                    isReady = false;
+                    break;
+                }
+            }
+            try{
+                Thread.sleep(1000);
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+
+        }
+        Game game = new Game(this);
+        new Thread(game).start();
 
 
 
@@ -57,7 +82,12 @@ public class Server implements Runnable, Serializable {
     }
     public synchronized void disconnectClient(ClientThread client){
         try {
-            disconnectionLog.add(client.getName()+" disconnected");
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    disconnectionLog.add(client.getName()+" disconnected");
+                }
+            });
             clientThreads.remove(client);
         }catch (NullPointerException e){
 

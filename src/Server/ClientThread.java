@@ -26,6 +26,7 @@ public class ClientThread implements Runnable , Serializable {
     private Game baseGame;
     private boolean isAlive = true;
     private boolean muted = false;
+    boolean isReady = false;
 
     public ClientThread(Socket clientSocket, Server baseServer) throws Exception{
         this.baseServer = baseServer;
@@ -94,8 +95,8 @@ public class ClientThread implements Runnable , Serializable {
 
     private void processMessage(Message message){
 
-        if(message.getTitle() == MessageType.REGISTER){
-//            this.name = message.getContent().toString();
+        if(message.getTitle() == MessageType.STARTGAME){
+            isReady = true;
         }else if(message.getTitle() == MessageType.CHAT && !muted){
             baseServer.writeChatMessageToAll(message);
         }else if(message.getTitle() == MessageType.VOTE){

@@ -27,7 +27,7 @@ public class Client implements Runnable, Serializable{
     SimpleBooleanProperty selectButtonDisable = new SimpleBooleanProperty(true);
     SimpleBooleanProperty quitButtonDisable = new SimpleBooleanProperty(true);
     SimpleBooleanProperty comboDisable = new SimpleBooleanProperty(true);
-    SimpleBooleanProperty chatFieldDisable = new SimpleBooleanProperty(false);
+    SimpleBooleanProperty chatFieldDisable = new SimpleBooleanProperty(true);
     SimpleBooleanProperty selectButtonVisible = new SimpleBooleanProperty(false);
     SimpleBooleanProperty quitButtonVisible = new SimpleBooleanProperty(false);
     SimpleBooleanProperty comboVisible = new SimpleBooleanProperty(false);

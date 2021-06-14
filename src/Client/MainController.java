@@ -30,6 +30,8 @@ public class MainController {
     private Button quitButton;
     @FXML
     private TextArea secretChat;
+    @FXML
+    private Button startButton;
 
     public void initialize(){
         chatTextField.textProperty().addListener(new RTLChange(chatTextField));
@@ -93,6 +95,16 @@ public class MainController {
                     }
                 };
             }
+        });
+        startButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                client.sendMessage(new Message(MessageType.STARTGAME, ""));
+                startButton.setVisible(false);
+                startButton.setDisable(true);
+                client.chatFieldDisable.set(false);
+            }
+
         });
         voteButton.setOnAction(new EventHandler<ActionEvent>() {
 
