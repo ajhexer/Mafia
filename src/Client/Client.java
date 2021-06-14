@@ -13,6 +13,7 @@ import javafx.collections.ObservableList;
 
 import java.io.*;
 import java.net.Socket;
+import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.List;
 
@@ -46,21 +47,12 @@ public class Client implements Runnable, Serializable{
 
     @Override
     public void run() {
-//        try {
-////            clientToServerWriter.writeObject(new GameMessage(MessageType.REGISTER, this.name));
-//        }catch (Exception e){
-//            e.printStackTrace();
-//        }
-//        while(true){
-//            try {
-//                processMessage((GameMessage) serverToClientReader.readObject());
-//            }catch (Exception e){
-//                e.printStackTrace();
-//            }
-//        }
+
         while(true){
             try{
                 processMessage((Message) serverToClientReader.readObject());
+            }catch (SocketException e){
+                break;
             }catch (Exception e){
                 e.printStackTrace();
             }
@@ -78,6 +70,7 @@ public class Client implements Runnable, Serializable{
             selectButtonAccess.set(false);
             quitAccess.set(false);
             chatAccess.set(true);
+            comboAccess.set(false);
         }else if(message.getTitle() == MessageType.MAFIATARGET){
             currentVoteItems.setAll((List<Player>)message.getContent());
             selectType = MessageType.MAFIATARGET;
@@ -117,7 +110,15 @@ public class Client implements Runnable, Serializable{
             lastSecret+=(String) message.getContent()+"\n";
             secretLog.set(lastSecret);
         }else if(message.getTitle() == MessageType.ENDVOTE){
-
+            selectButtonAccess.set(false);
+            quitAccess.set(false);
+            comboAccess.set(false);
+        }else if(message.getTitle() == MessageType.VOTE){
+            selectButtonText.set("Select");
+            selectButtonAccess.set(true);
+            comboAccess.set(true);
+            currentVoteItems.setAll((List<Player>)message.getContent());
+            labelText.set("Which one to vote");
         }
 
     }
@@ -129,6 +130,13 @@ public class Client implements Runnable, Serializable{
             e.printStackTrace();
         }
 
+    }
+    public void sendMessage(Message message){
+        try {
+            clientToServerWriter.writeObject(message);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
 
@@ -151,5 +159,25 @@ public class Client implements Runnable, Serializable{
 
     public SimpleBooleanProperty chatAccessProperty() {
         return chatAccess;
+    }
+
+    public void setSelectButtonAccess(boolean selectButtonAccess) {
+        this.selectButtonAccess.set(selectButtonAccess);
+    }
+
+    public void setQuitAccess(boolean quitAccess) {
+        this.quitAccess.set(quitAccess);
+    }
+
+    public void setComboAccess(boolean comboAccess) {
+        this.comboAccess.set(comboAccess);
+    }
+    public Message readMessage()throws Exception{
+        try{
+            return (Message) serverToClientReader.readObject();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        throw new Exception();
     }
 }

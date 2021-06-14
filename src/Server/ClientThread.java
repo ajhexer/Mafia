@@ -12,8 +12,10 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class ClientThread implements Runnable , Serializable {
     private Server baseServer;
@@ -36,11 +38,48 @@ public class ClientThread implements Runnable , Serializable {
 
     @Override
     public void run() {
+        boolean isRepeated = true;
+        while(isRepeated){
+            try {
+                Message message = (Message) incomingMessage.readObject();
+                if(((String)message.getContent()).length()==0){
+                    sendMessage(new Message(MessageType.REGISTER, new Boolean(false)));
+                    continue;
+                }
+                if(message.getTitle()==MessageType.REGISTER){
+                    for(ClientThread clientThread: baseServer.getClientThreads()){
+                        if(!clientThread.equals(this)){
+                            if(clientThread.getName().equals(message.getContent())){
+                                sendMessage(new Message(MessageType.REGISTER, new Boolean(false)));
+                                break;
+                            }
+                        }
+                    }
+                    sendMessage(new Message(MessageType.REGISTER, new Boolean(true)));
+                    this.name = (String) message.getContent();
+                    isRepeated = false;
+                }
+            }catch (SocketException e){
+
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+
+        }
         while (true){
             try{
                 if(isAlive){
                     processMessage((Message) incomingMessage.readObject());
                 }
+            }catch (SocketException e){
+                isAlive = false;
+                baseGame.deleteByClientThread(this);
+                try{
+                    clientSocket.close();
+                }catch (Exception c){
+                    e.printStackTrace();
+                }
+                break;
             }catch (Exception e){
 //                System.out.println( name + " "+clientSocket.getInetAddress() + " Disconnected");
 //                try{
@@ -63,6 +102,8 @@ public class ClientThread implements Runnable , Serializable {
         }else if(message.getTitle() == MessageType.CHAT && !muted){
             baseServer.writeChatMessageToAll(message);
         }else if(message.getTitle() == MessageType.VOTE){
+            baseGame.processGameMessages(message, this);
+        }else{
             baseGame.processGameMessages(message, this);
         }
     }
@@ -90,15 +131,6 @@ public class ClientThread implements Runnable , Serializable {
 //        return basePlayer;
 //    }
 //
-    @Override
-    public boolean equals(Object obj) {
-        if(! (obj instanceof ClientThread)){
-            return false;
-        }
-        ClientThread client = (ClientThread) obj;
-        return this.name.equals(client.name) && this.clientSocket.equals(client.clientSocket);
-    }
-
     public String getName() {
         return name;
     }
@@ -117,5 +149,18 @@ public class ClientThread implements Runnable , Serializable {
 
     public void setMuted(boolean muted) {
         this.muted = muted;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ClientThread that = (ClientThread) o;
+        return Objects.equals(clientSocket, that.clientSocket) && Objects.equals(name, that.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(clientSocket, name);
     }
 }

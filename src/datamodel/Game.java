@@ -112,6 +112,7 @@ public class Game implements Runnable{
             }
             players.add(temp);
             playerToClient.put(temp, clients.get(i));
+            clients.get(i).sendMessage(new Message(MessageType.SECRET, "You are " + temp.getRole()));
         }
     }
     private void startVote(){
@@ -328,8 +329,8 @@ public class Game implements Runnable{
             tempPro.setTarget((Player)temp.getContent());
         }else if(role.equals(GameRoles.MAYOR)){
             Mayor tempMayor = (Mayor) tempPlayer;
-            if(temp.getContent() instanceof Boolean){
-                tempMayor.setCancelPoll((Boolean)temp.getContent());
+            if(temp.getContent() instanceof String){
+                tempMayor.setCancelPoll(true);
             }else if(temp.getContent() instanceof Player){
                 tempMayor.setToBeQuited((Player) temp.getContent());
             }
@@ -390,6 +391,7 @@ public class Game implements Runnable{
         diedRoles.add(player.getRole());
         players.remove(player);
         playerToClient.get(player).sendMessage(new Message(MessageType.SECRET, "You are died"));
+        baseServer.disconnectClient(playerToClient.get(player));
         playerToClient.get(player).setAlive(false);
         playerToClient.remove(player);
     }
@@ -432,5 +434,12 @@ public class Game implements Runnable{
             toPublish.append(" ");
         }
         baseServer.writeChatMessageToAll(new Message(MessageType.CHAT, toPublish.toString()));
+    }
+    public void deleteByClientThread(ClientThread client){
+        playerToClient.forEach(((player, clientThread) -> {
+            if(clientThread.equals(client)){
+                deletePlayer(player);
+            }
+        }));
     }
 }

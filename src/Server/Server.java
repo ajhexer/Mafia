@@ -46,6 +46,7 @@ public class Server implements Runnable, Serializable {
         }
 
 
+
     }
     public synchronized void writeChatMessageToAll(Message message){
         for(ClientThread client: clientThreads){

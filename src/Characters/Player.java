@@ -4,6 +4,7 @@ import datamodel.GameRoles;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Objects;
 
 public class Player implements Serializable {
     protected GameRoles role = null;
@@ -94,4 +95,16 @@ public class Player implements Serializable {
         this.life = life;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Player player = (Player) o;
+        return role == player.role && Objects.equals(name, player.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(role, name);
+    }
 }

@@ -2,6 +2,10 @@ package Client;
 
 import Server.ClientThread;
 
+import datamodel.GameRoles;
+import datamodel.Message;
+import datamodel.MessageType;
+import datamodel.SpecialMessage;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -27,6 +31,8 @@ public class MainController {
     private Label modeLabel;
     @FXML
     private Button quitButton;
+    @FXML
+    private TextArea secretChat;
 
     public void initialize(){
         clientThread = new Thread(client);
@@ -75,49 +81,54 @@ public class MainController {
                 return cell;
             }
         });
-//        nameBox.setCellFactory(new Callback<ListView<ClientThread>, ListCell<ClientThread>>() {
-//            @Override
-//            public ListCell<ClientThread> call(ListView<ClientThread> clientThreadListView) {
-//                return new ListCell<ClientThread>(){
-//                    @Override
-//                    protected void updateItem(ClientThread clientThread, boolean b) {
-//                        if(clientThread==null || b){
-//                            setGraphic(null);
-//                        }else{
-//                            setText(clientThread.getName());
-//                        }
-//                    }
-//                };
-//            }
-//        });
-//        voteButton.setOnAction(new EventHandler<ActionEvent>() {
-//
-//            @Override
-//            public void handle(ActionEvent event) {
-////                if (client.getSelectType()==MessageType.VOTE){
-////                    client.sendVoteMessage(new GameMessage(MessageType.VOTE, nameBox.getSelectionModel().getSelectedItem()));
-////                }else if(client.getSelectType()==MessageType.SPECIAL){
-////
-////                }else if(client.getSelectType()==MessageType.MAFIATARGET){
-////
-////                }
-//            }
-//        });
-//        voteButton.visibleProperty().bind(client.isButtonDisable());
-//        voteButton.disableProperty().bind(client.isButtonDisable());
-//        nameBox.visibleProperty().bind(client.isButtonDisable());
-//        nameBox.disableProperty().bind(client.isButtonDisable());
-//        modeLabel.disableProperty().bind(client.isButtonDisable());
-//        quitButton.disableProperty().bind(client.isQuitDisable());
-//        quitButton.visibleProperty().bind(client.isQuitDisable());
-//        quitButton.setOnAction(new EventHandler<ActionEvent>() {
-//            @Override
-//            public void handle(ActionEvent event) {
-//                client.sendAbilityMessage(new SpecialMessage(MessageType.SPECIAL, "Quit", GameRoles.MAYOR));
-//            }
-//        });
-        chatTextField.textProperty().bind(client.secretLog);
-        chatTextField.setEditable(false);
+        nameBox.setCellFactory(new Callback<ListView<ClientThread>, ListCell<ClientThread>>() {
+            @Override
+            public ListCell<ClientThread> call(ListView<ClientThread> clientThreadListView) {
+                return new ListCell<ClientThread>(){
+                    @Override
+                    protected void updateItem(ClientThread clientThread, boolean b) {
+                        if(clientThread==null || b){
+                            setGraphic(null);
+                        }else{
+                            setText(clientThread.getName());
+                        }
+                    }
+                };
+            }
+        });
+        voteButton.setOnAction(new EventHandler<ActionEvent>() {
+
+            @Override
+            public void handle(ActionEvent event) {
+                if (client.getSelectType()==MessageType.VOTE){
+                    client.sendMessage(new Message(MessageType.VOTE, nameBox.getSelectionModel().getSelectedItem()));
+                }else if(client.getSelectType()==MessageType.SPECIAL){
+                    client.sendMessage(new Message(MessageType.SPECIAL, nameBox.getSelectionModel().getSelectedItem()));
+                    client.setComboAccess(false);
+                    client.setQuitAccess(false);
+                    client.setSelectButtonAccess(false);
+                }else if(client.getSelectType()== MessageType.MAFIATARGET){
+                    client.sendMessage(new Message(MessageType.MAFIATARGET, nameBox.getSelectionModel().getSelectedItem()));
+                }
+            }
+        });
+        voteButton.visibleProperty().bind(client.isButtonDisable());
+        voteButton.disableProperty().bind(client.isButtonDisable());
+        nameBox.visibleProperty().bind(client.isButtonDisable());
+        nameBox.disableProperty().bind(client.isButtonDisable());
+        modeLabel.disableProperty().bind(client.isButtonDisable());
+        modeLabel.visibleProperty().bind(client.isButtonDisable());
+        quitButton.disableProperty().bind(client.isQuitDisable());
+        quitButton.visibleProperty().bind(client.isQuitDisable());
+        quitButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                client.sendMessage(new SpecialMessage(MessageType.SPECIAL, "Quit", GameRoles.MAYOR));
+            }
+        });
+        secretChat.textProperty().bind(client.secretLog);
+        secretChat.setEditable(false);
+
     }
     public void setClient(Client client){
         this.client = client;

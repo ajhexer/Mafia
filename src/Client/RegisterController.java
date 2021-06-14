@@ -1,5 +1,7 @@
 package Client;
 
+import datamodel.Message;
+import datamodel.MessageType;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -29,7 +31,7 @@ public class RegisterController {
     private TextField portField;
     @FXML
     private Label errorLabel;
-    private Client client;
+    private Client client = null;
     private FXMLLoader loader;
     private MainController controller;
     private Thread clientThread;
@@ -57,16 +59,27 @@ public class RegisterController {
             @Override
             public void run() {
                 try {
-                    client = new Client(ipField.getText(), Integer.parseInt(portField.getText()), nameField.getText());
-                    controller.setClient(client);
+                    if(client==null){
+                        client = new Client(ipField.getText(), Integer.parseInt(portField.getText()), nameField.getText());
+                        controller.setClient(client);
+                    }
+                    client.sendMessage(new Message(MessageType.REGISTER, nameField.getText()));
+                    Message message = client.readMessage();
+                    if((Boolean) message.getContent()){
+                        loader.setController(controller);
+                        Parent root = loader.load();
+                        stage.close();
+                        stage.setScene(new Scene(root,900, 500));
+                        stage.setResizable(false);
+                        stage.show();
+                    }else{
+                        errorLabel.setVisible(true);
+                        errorLabel.setText("Please choose another name");
+                        errorLabel.setTextFill(Color.RED);
+                    }
 //                    clientThread.setDaemon(true);
 //                    clientThread.start();
-                    loader.setController(controller);
-                    Parent root = loader.load();
-                    stage.close();
-                    stage.setScene(new Scene(root,900, 500));
-                    stage.setResizable(false);
-                    stage.show();
+
                 }catch (ConnectException e){
                     Platform.runLater(new Runnable() {
                         @Override
