@@ -160,6 +160,8 @@ public class MainController {
         secretChat.textProperty().bind(client.secretLog);
         secretChat.setEditable(false);
         nameBox.getSelectionModel().selectFirst();
+        voteButton.textProperty().bind(client.selectButtonText);
+        modeLabel.textProperty().bind(client.labelText);
     }
     public void setClient(Client client){
         this.client = client;

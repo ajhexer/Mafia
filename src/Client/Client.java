@@ -38,8 +38,8 @@ public class Client implements Runnable, Serializable{
     ObservableList<Player> currentVoteItems = FXCollections.observableArrayList();
     ObservableList<String> chatLog = FXCollections.observableArrayList();
     SimpleStringProperty secretLog = new SimpleStringProperty("");
-    private SimpleStringProperty selectButtonText = new SimpleStringProperty();
-    private SimpleStringProperty labelText = new SimpleStringProperty();
+    SimpleStringProperty selectButtonText = new SimpleStringProperty();
+    SimpleStringProperty labelText = new SimpleStringProperty();
     GameRoles clientRole = null;
 
 
@@ -83,13 +83,23 @@ public class Client implements Runnable, Serializable{
         }else if(message.getTitle() == MessageType.MAFIATARGET){
             currentVoteItems.setAll((List<Player>)message.getContent());
             selectType = MessageType.MAFIATARGET;
-            selectButtonText.set("Select");
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    selectButtonText.set("Select");
+                }
+            });
             selectButtonDisable.set(false);
             selectButtonVisible.set(true);
         }else if(message.getTitle() == MessageType.SPECIAL){
             SpecialMessage temp = (SpecialMessage) message;
             if(temp.getRole()== GameRoles.MAYOR){
-                selectButtonText.set("Select");
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        selectButtonText.set("Select");
+                    }
+                });
                 quitButtonVisible.set(true);
                 quitButtonDisable.set(false);
                 selectButtonVisible.set(true);
@@ -99,28 +109,68 @@ public class Client implements Runnable, Serializable{
             }else if(temp.getRole() == GameRoles.DIEHARD){
                 selectButtonVisible.set(true);
                 selectButtonDisable.set(false);
-                selectButtonText.set("Yes");
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        selectButtonText.set("Yes");
+                    }
+                });
             }else{
                 comboVisible.set(true);
                 comboDisable.set(false);
                 selectButtonVisible.set(true);
                 selectButtonDisable.set(false);
-                selectButtonText.set("Select");
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        selectButtonText.set("Select");
+                    }
+                });
             }
             selectType = MessageType.SPECIAL;
             clientRole = ((SpecialMessage) message).getRole();
             if(temp.getRole()==GameRoles.DETECTIVE){
-                labelText.set("Which one you want to ask?");
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        labelText.set("Which one you want to ask?");
+                    }
+                });
             }else if(temp.getRole()==GameRoles.LECTER || temp.getRole()==GameRoles.DOCTOR){
-                labelText.set("Which one you want to save?");
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        labelText.set("Which one you want to save?");
+                    }
+                });
             }else if(temp.getRole()==GameRoles.DIEHARD){
-                labelText.set("Do you want to ask died roles?");
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        labelText.set("Do you want to ask died roles?");
+                    }
+                });
             }else if(temp.getRole() == GameRoles.MAYOR){
-                labelText.set("Select if you want cancel or quit vote");
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        labelText.set("Select if you want cancel or quit vote");
+                    }
+                });
             }else if(temp.getRole() == GameRoles.PSYCHO){
-                labelText.set("Select if you want mute a player");
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        labelText.set("Select if you want mute a player");
+                    }
+                });
             }else if(temp.getRole() == GameRoles.PRO){
-                labelText.set("Select if you want shoot a player");
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        labelText.set("Select if you want shoot a player");
+                    }
+                });
             }
         }else if(message.getTitle() == MessageType.SECRET){
             String lastSecret = secretLog.get()+(String) message.getContent()+"\n";
@@ -138,13 +188,23 @@ public class Client implements Runnable, Serializable{
             comboVisible.set(false);
             comboDisable.set(true);
         }else if(message.getTitle() == MessageType.VOTE){
-            selectButtonText.set("Select");
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    selectButtonText.set("Select");
+                }
+            });
             selectButtonVisible.set(true);
             selectButtonDisable.set(false);
             comboVisible.set(true);
             comboDisable.set(false);
             currentVoteItems.setAll((List<Player>)message.getContent());
-            labelText.set("Which one to vote");
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    labelText.set("Which one to vote");
+                }
+            });
         }
 
     }
